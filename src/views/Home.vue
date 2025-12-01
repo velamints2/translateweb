@@ -28,6 +28,12 @@
           <el-select v-model="languageTo" class="language-select">
             <el-option label="英文" value="EN-US"></el-option>
             <el-option label="日文" value="JA"></el-option>
+            <el-option label="繁体中文" value="ZH-TW"></el-option>
+            <el-option label="德语" value="DE"></el-option>
+            <el-option label="西班牙语" value="ES"></el-option>
+            <el-option label="法语" value="FR"></el-option>
+            <el-option label="韩语" value="KO"></el-option>
+            <el-option label="越南语" value="VI"></el-option>
           </el-select>
         </div>
         <div class="simulation-option">
@@ -365,6 +371,12 @@ const useSimulation = ref(false)
 const editableExistingTerms = ref([])
 const editableNewTerms = ref([])
 
+// 小语种列表（跳过术语确认，直接翻译）
+const minorLanguages = ['ZH-TW', 'DE', 'ES', 'FR', 'KO', 'VI']
+
+// 检查是否是小语种
+const isMinorLanguage = computed(() => minorLanguages.includes(languageTo.value))
+
 // 加载状态
 const loading = reactive({
   submit: false,
@@ -409,7 +421,6 @@ const submitText = async () => {
     if (useSimulation.value) {
       // 使用模拟数据，不调用真实API
       console.log('📤 使用模拟数据进行文档分析')
-      
       // 生成模拟分析结果
       const simulationData = {
         sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -447,16 +458,33 @@ const submitText = async () => {
           { original: '禁区', translation: 'Forbidden Zone', reason: '新术语建议翻译', confirmed: false }
         ].filter(noun => inputText.value.includes(noun.original))
       }
-      
       analysisResult.value = simulationData
       initializeEditableTerms() // 初始化可编辑术语
       ElMessage.success('文档分析完成！（使用模拟数据）')
+      // 小语种直接跳过术语确认
+      if (isMinorLanguage.value) {
+        confirmationResult.value = {
+          sessionId: simulationData.sessionId,
+          confirmedNouns: [],
+        }
+        await startTranslation()
+        return
+      }
     } else {
       // 调用真实API
       const data = await submitTextAPI(inputText.value.trim(), null, languageFrom.value, languageTo.value)
       analysisResult.value = data
       initializeEditableTerms() // 初始化可编辑术语
       ElMessage.success('文档分析完成！')
+      // 小语种直接跳过术语确认
+      if (isMinorLanguage.value) {
+        confirmationResult.value = {
+          sessionId: data.sessionId,
+          confirmedNouns: [],
+        }
+        await startTranslation()
+        return
+      }
     }
   } catch (error) {
     errorMessage.value = error.message
