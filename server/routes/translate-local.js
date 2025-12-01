@@ -579,24 +579,50 @@ async function extractTextFromFile(filePath, mimetype, originalname) {
   
   // PDF文件
   if (mimetype === 'application/pdf' || extension === '.pdf') {
-    return new Promise((resolve, reject) => {
-      const pdfParser = new PDFParser()
-      
-      pdfParser.on('pdfParser_dataError', errData => {
-        reject(new Error(`PDF解析错误: ${errData.parserError}`))
+    // 首先尝试使用 pdf2json 提取文本
+    try {
+      const text = await new Promise((resolve, reject) => {
+        const pdfParser = new PDFParser()
+        
+        pdfParser.on('pdfParser_dataError', errData => {
+          reject(new Error(`PDF解析错误: ${errData.parserError}`))
+        })
+        
+        pdfParser.on('pdfParser_dataReady', pdfData => {
+          try {
+            const rawText = pdfParser.getRawTextContent()
+            resolve(rawText)
+          } catch (error) {
+            reject(new Error(`提取PDF文本失败: ${error.message}`))
+          }
+        })
+        
+        pdfParser.loadPDF(filePath)
       })
       
-      pdfParser.on('pdfParser_dataReady', pdfData => {
-        try {
-          const text = pdfParser.getRawTextContent()
-          resolve(text || '[PDF文件无文本内容]')
-        } catch (error) {
-          reject(new Error(`提取PDF文本失败: ${error.message}`))
-        }
-      })
-      
-      pdfParser.loadPDF(filePath)
-    })
+      // 检查提取的文本是否有实际内容
+      const cleanText = text ? text.replace(/\r\n/g, '\n').replace(/\s+/g, ' ').trim() : ''
+      if (cleanText && cleanText.length > 10) {
+        logger.info('✅ pdf2json 成功提取PDF文本')
+        return cleanText
+      }
+    } catch (pdfError) {
+      logger.warn('⚠️ pdf2json 解析失败，尝试使用 TextIn OCR:', pdfError.message)
+    }
+    
+    // 如果 pdf2json 无法提取有效文本，使用 TextIn OCR
+    logger.info('🔍 使用 TextIn OCR 识别 PDF 文字...')
+    try {
+      const ocrResult = await textinOcrRecognize(filePath)
+      if (ocrResult && ocrResult.trim().length > 0) {
+        logger.info('✅ TextIn OCR 成功识别 PDF，文字长度:', ocrResult.length)
+        return ocrResult
+      }
+    } catch (ocrError) {
+      logger.error('⚠️ TextIn OCR 识别失败:', ocrError.message)
+    }
+    
+    return '[PDF文件无可识别文字内容]'
   }
   
   // Word文档

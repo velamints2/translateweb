@@ -309,6 +309,17 @@
               完成令牌：{{ translationResult.usage.completion_tokens }}
             </p>
           </div>
+          <div class="translation-actions">
+            <el-button type="primary" icon="DocumentCopy" @click="copyTranslation">
+              复制译文
+            </el-button>
+            <el-button type="success" icon="Download" @click="downloadTranslation('txt')">
+              下载 TXT
+            </el-button>
+            <el-button type="warning" icon="Download" @click="downloadTranslation('docx')">
+              下载 Word
+            </el-button>
+          </div>
         </div>
       </el-card>
     </div>
@@ -329,7 +340,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Refresh, UploadFilled, Document, ChatDotRound, Switch } from '@element-plus/icons-vue'
+import { Refresh, UploadFilled, Document, ChatDotRound, Switch, Download, DocumentCopy } from '@element-plus/icons-vue'
 import { 
   submitTextAPI, 
   confirmNounsAPI, 
@@ -599,17 +610,28 @@ const handleFileUploadSuccess = async (response, file) => {
     
     // 检查response格式
     if (response.success) {
+      const extractedText = response.originalText || response.extractedText || ''
+      
+      // 检查是否有有效的提取文本（排除占位符文本）
+      const isPlaceholder = extractedText.includes('[PDF文件无') || 
+                           extractedText.includes('[图片无') ||
+                           extractedText.trim().length === 0
+      
       uploadedFile.value = {
         name: response.fileName || file.name,
         size: file.size,
         type: file.type,
-        extractedText: response.originalText || response.extractedText || ''
+        extractedText: extractedText
       }
       
       // 自动填充到输入框
-      inputText.value = response.originalText || response.extractedText || ''
+      inputText.value = isPlaceholder ? '' : extractedText
       
-      ElMessage.success('文件上传成功! 文本内容已自动提取')
+      if (isPlaceholder) {
+        ElMessage.warning('文件上传成功，但未能识别到文本内容。请尝试其他格式或检查文件。')
+      } else {
+        ElMessage.success('文件上传成功! 文本内容已自动提取')
+      }
     } else {
       ElMessage.error('文件处理失败: ' + (response.error || response.message || '未知错误'))
     }
@@ -654,6 +676,84 @@ const formatFileSize = (bytes) => {
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+// 复制翻译结果到剪贴板
+const copyTranslation = async () => {
+  if (!translationResult.value?.translatedText) {
+    ElMessage.warning('没有可复制的内容')
+    return
+  }
+  
+  try {
+    await navigator.clipboard.writeText(translationResult.value.translatedText)
+    ElMessage.success('已复制到剪贴板')
+  } catch (error) {
+    // 降级方案：使用传统方式复制
+    const textarea = document.createElement('textarea')
+    textarea.value = translationResult.value.translatedText
+    document.body.appendChild(textarea)
+    textarea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textarea)
+    ElMessage.success('已复制到剪贴板')
+  }
+}
+
+// 下载翻译结果为文件
+const downloadTranslation = async (format) => {
+  if (!translationResult.value?.translatedText) {
+    ElMessage.warning('没有可下载的内容')
+    return
+  }
+  
+  const text = translationResult.value.translatedText
+  const timestamp = new Date().toISOString().slice(0, 10)
+  
+  if (format === 'txt') {
+    // 下载为 TXT 文件
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `翻译结果_${timestamp}.txt`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    ElMessage.success('TXT 文件下载成功')
+  } else if (format === 'docx') {
+    // 下载为 Word 文档（简易 HTML 格式，Word 可打开）
+    const htmlContent = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+            xmlns:w="urn:schemas-microsoft-com:office:word">
+      <head>
+        <meta charset="utf-8">
+        <title>翻译结果</title>
+        <style>
+          body { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 12pt; line-height: 1.6; }
+          p { margin: 0 0 10pt 0; }
+        </style>
+      </head>
+      <body>
+        <h2>翻译结果</h2>
+        <p>翻译时间：${formatDate(translationResult.value.translationTime)}</p>
+        <hr>
+        ${text.split('\n').map(line => `<p>${line || '&nbsp;'}</p>`).join('')}
+      </body>
+      </html>
+    `
+    const blob = new Blob([htmlContent], { type: 'application/msword' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `翻译结果_${timestamp}.doc`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    ElMessage.success('Word 文件下载成功')
+  }
 }
 </script>
 
@@ -930,6 +1030,14 @@ const formatFileSize = (bytes) => {
   padding: 15px;
   background-color: #e9ecef;
   border-radius: 6px;
+}
+
+.translation-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .error-section {
