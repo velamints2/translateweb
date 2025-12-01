@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能翻译系统 - 产品使用说明</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 20px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge-container {
+            margin-top: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 5px;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .badge:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 15px 40px;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            list-style: none;
+            justify-content: center;
+        }
+
+        .nav-list a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .nav-list a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .new-badge {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-left: 10px;
+            font-weight: 600;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(238, 90, 36, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(238, 90, 36, 0.8); }
+        }
+
+        .steps {
+            counter-reset: step-counter;
+        }
+
+        .step {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 90px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .step:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .step::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 25px;
+            top: 25px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .step h4 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step p, .step ul {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .step ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+            font-size: 14px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 12px;
+            height: 12px;
+            background: #ff5f56;
+            border-radius: 50%;
+            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27ca40;
+        }
+
+        .code-block code {
+            background: none;
+            padding: 0;
+            display: block;
+            margin-top: 15px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fff3cd 0%, #ffeeba 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #ffc107;
+            margin: 25px 0;
+        }
+
+        .highlight strong {
+            color: #d63031;
+        }
+
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .api-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .api-table th,
+        .api-table td {
+            padding: 15px 20px;
+            text-align: left;
+        }
+
+        .api-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .api-table tbody tr:hover {
+            background: #e9ecef;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .method-get {
+            background: #28a745;
+            color: white;
+        }
+
+        .method-post {
+            background: #007bff;
+            color: white;
+        }
+
+        .method-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .check {
+            color: #00b894;
+            font-weight: 700;
+        }
+
+        .cross {
+            color: #d63031;
+            font-weight: 700;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .footer .version {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .alert {
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .alert-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            color: #155724;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            color: #721c24;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tech-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 25px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+        }
+
+        .timeline-date {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .score-demo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .score-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                padding-left: 25px;
+                padding-top: 70px;
+            }
+
+            .step::before {
+                left: 50%;
+                transform: translateX(-50%);
+                top: 15px;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .score-demo {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🌐 智能翻译系统</h1>
+            <p class="subtitle">基于 GPT-5.1 + DeepSeek 的企业级专业翻译解决方案</p>
+            <div class="badge-container">
+                <span class="badge">🤖 GPT-5.1 翻译引擎</span>
+                <span class="badge">📷 TextIn OCR</span>
+                <span class="badge">📄 PDF 排版保持</span>
+                <span class="badge">⭐ 翻译质量评分</span>
+                <span class="badge">📚 飞书术语库</span>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <nav class="nav">
+            <ul class="nav-list">
+                <li><a href="#overview">系统概述</a></li>
+                <li><a href="#features">核心功能</a></li>
+                <li><a href="#quickstart">快速开始</a></li>
+                <li><a href="#usage">使用流程</a></li>
+                <li><a href="#api">API 接口</a></li>
+                <li><a href="#faq">常见问题</a></li>
+                <li><a href="#changelog">更新日志</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <!-- 系统概述 -->
+            <div class="section" id="overview">
+                <h2 class="section-title">系统概述</h2>
+                <div class="card">
+                    <h3>🎯 产品定位</h3>
+                    <p>智能翻译系统是一个面向企业的专业翻译平台，采用 <strong>GPT-5.1</strong> 作为核心翻译引擎，<strong>DeepSeek</strong> 负责预处理和质量评估，提供高质量、术语一致性的翻译服务。系统支持文本翻译、图片 OCR、PDF 排版翻译等多种场景。</p>
+                    
+                    <div class="tech-stack">
+                        <span class="tech-item">Node.js + Express</span>
+                        <span class="tech-item">Vue.js 3</span>
+                        <span class="tech-item">OpenAI GPT-5.1</span>
+                        <span class="tech-item">DeepSeek AI</span>
+                        <span class="tech-item">TextIn OCR</span>
+                        <span class="tech-item">pdf-lib</span>
+                        <span class="tech-item">飞书开放平台</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心功能 -->
+            <div class="section" id="features">
+                <h2 class="section-title">核心功能</h2>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <span class="feature-icon">🌐</span>
+                        <div class="feature-title">GPT-5.1 翻译</div>
+                        <div class="feature-desc">采用最新 GPT-5.1 模型，提供专业级翻译质量，支持中英双向翻译</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📷</span>
+                        <div class="feature-title">TextIn OCR<span class="new-badge">NEW</span></div>
+                        <div class="feature-desc">集成 TextIn 智能文档识别，支持图片、扫描件文字提取，准确率高达 99%</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📄</span>
+                        <div class="feature-title">PDF 排版翻译<span class="new-badge">NEW</span></div>
+                        <div class="feature-desc">翻译 PDF 同时保持原始排版布局，输出专业文档</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">⭐</span>
+                        <div class="feature-title">翻译质量评分<span class="new-badge">NEW</span></div>
+                        <div class="feature-desc">DeepSeek 严格评估翻译质量，四维度打分（准确性、流畅度、术语、风格）</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📚</span>
+                        <div class="feature-title">术语库管理</div>
+                        <div class="feature-desc">飞书知识库集成，自动匹配和保存术语翻译，保证一致性</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📋</span>
+                        <div class="feature-title">智能预处理</div>
+                        <div class="feature-desc">DeepSeek 自动分析文档领域、提取专业术语、生成详细报告</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📁</span>
+                        <div class="feature-title">多格式支持</div>
+                        <div class="feature-desc">支持 TXT、PDF、Word、图片等多种文档格式上传翻译</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">⚡</span>
+                        <div class="feature-title">自动分段</div>
+                        <div class="feature-desc">长文本智能分段处理，避免超时，支持大文档翻译</div>
+                    </div>
+                </div>
+
+                <!-- 翻译评分功能详解 -->
+                <div class="card">
+                    <h3>⭐ 翻译质量评分系统</h3>
+                    <p>系统采用 DeepSeek AI 对翻译结果进行严格的四维度评估：</p>
+                    
+                    <div class="score-demo">
+                        <div class="score-item">
+                            <div class="score-value">25</div>
+                            <div class="score-label">准确性</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value">25</div>
+                            <div class="score-label">流畅度</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value">25</div>
+                            <div class="score-label">术语</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value">25</div>
+                            <div class="score-label">风格</div>
+                        </div>
+                    </div>
+
+                    <table class="api-table">
+                        <thead>
+                            <tr>
+                                <th>评分等级</th>
+                                <th>分数范围</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>A+</strong></td><td>95-100</td><td>卓越，可直接发布</td></tr>
+                            <tr><td><strong>A</strong></td><td>90-94</td><td>优秀，微调即可</td></tr>
+                            <tr><td><strong>B+</strong></td><td>85-89</td><td>良好，需少量修改</td></tr>
+                            <tr><td><strong>B</strong></td><td>80-84</td><td>中等偏上，需修改</td></tr>
+                            <tr><td><strong>C+</strong></td><td>70-79</td><td>中等，建议重译部分</td></tr>
+                            <tr><td><strong>C</strong></td><td>60-69</td><td>及格，需大量修改</td></tr>
+                            <tr><td><strong>D</strong></td><td>40-59</td><td>较差，建议重译</td></tr>
+                            <tr><td><strong>F</strong></td><td>0-39</td><td>不合格，必须重译</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PDF 翻译功能详解 -->
+                <div class="card">
+                    <h3>📄 PDF 排版翻译</h3>
+                    <p>系统支持上传 PDF 文件，翻译后<strong>保持原始排版</strong>输出：</p>
+                    
+                    <div class="steps">
+                        <div class="step">
+                            <h4>PDF 解析</h4>
+                            <p>使用 TextIn xParse 智能解析 PDF，提取文本块及其精确位置坐标</p>
+                        </div>
+                        <div class="step">
+                            <h4>分块翻译</h4>
+                            <p>对每个文本块调用 GPT-5.1 进行翻译，保持对应关系</p>
+                        </div>
+                        <div class="step">
+                            <h4>排版重建</h4>
+                            <p>使用 pdf-lib 在原始位置覆盖译文，生成保持排版的翻译 PDF</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <span class="alert-icon">💡</span>
+                        <div>
+                            <strong>支持两种输出模式：</strong><br>
+                            • <code>overlay</code> - 在原 PDF 上覆盖译文（默认）<br>
+                            • <code>bilingual</code> - 生成双语对照 PDF
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速开始 -->
+            <div class="section" id="quickstart">
+                <h2 class="section-title">快速开始</h2>
+
+                <div class="highlight">
+                    <strong>⚡ 5分钟快速部署</strong><br>
+                    只需四个步骤即可启动系统！
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <h4>安装依赖</h4>
+                        <p>在项目根目录执行：</p>
+                        <div class="code-block"><code>npm install</code></div>
+                    </div>
+
+                    <div class="step">
+                        <h4>配置环境变量</h4>
+                        <p>创建 <code>.env</code> 文件并添加以下配置：</p>
+                        <div class="code-block"><code># 翻译引擎配置
+OPENAI_API_KEY=sk-your-openai-key          # GPT-5.1 翻译
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-5.1
+
+# 预处理和评估引擎配置
+DEEPSEEK_API_KEY=sk-your-deepseek-key      # DeepSeek 预处理/评估
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-chat
+
+# OCR 配置（TextIn）
+TEXTIN_APP_ID=your_textin_app_id
+TEXTIN_SECRET_CODE=your_textin_secret
+
+# 飞书配置（可选）
+FEISHU_APP_ID=your_feishu_app_id
+FEISHU_APP_SECRET=your_feishu_secret
+
+# 服务配置
+PORT=3001
+USE_LOCAL_AGENT=true</code></div>
+                    </div>
+
+                    <div class="step">
+                        <h4>启动服务</h4>
+                        <p>启动后端服务器：</p>
+                        <div class="code-block"><code>node server/index.js</code></div>
+                        <p>启动前端开发服务器（新终端）：</p>
+                        <div class="code-block"><code>npm run dev</code></div>
+                    </div>
+
+                    <div class="step">
+                        <h4>访问应用</h4>
+                        <p>在浏览器中打开：</p>
+                        <ul>
+                            <li>前端界面：<code>http://localhost:5173</code></li>
+                            <li>后端 API：<code>http://localhost:3001</code></li>
+                            <li>健康检查：<code>http://localhost:3001/health</code></li>
+                        </ul>
+                        <div class="alert alert-success">
+                            <span class="alert-icon">✅</span>
+                            <div>系统启动成功！现在可以开始翻译了</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 使用流程 -->
+            <div class="section" id="usage">
+                <h2 class="section-title">使用流程</h2>
+
+                <div class="card">
+                    <h3>📝 标准文本翻译流程</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <h4>输入文本</h4>
+                            <p>在文本框中输入待翻译内容，或上传文档文件（支持 TXT、PDF、Word、图片）</p>
+                        </div>
+
+                        <div class="step">
+                            <h4>提交分析</h4>
+                            <p>点击「提交文本」按钮，系统将自动：</p>
+                            <ul>
+                                <li>识别文档领域和风格</li>
+                                <li>提取专有名词</li>
+                                <li>匹配已有术语库</li>
+                                <li>生成详细分析报告</li>
+                            </ul>
+                        </div>
+
+                        <div class="step">
+                            <h4>确认术语</h4>
+                            <p>查看系统识别的术语，可以：</p>
+                            <ul>
+                                <li>✅ 确认使用建议翻译</li>
+                                <li>✏️ 修改术语翻译</li>
+                                <li>➕ 添加新术语</li>
+                            </ul>
+                        </div>
+
+                        <div class="step">
+                            <h4>开始翻译</h4>
+                            <p>确认术语后，点击「开始翻译」，系统将使用 GPT-5.1 执行专业翻译</p>
+                        </div>
+
+                        <div class="step">
+                            <h4>查看结果</h4>
+                            <p>翻译完成后可以：</p>
+                            <ul>
+                                <li>📋 复制翻译结果</li>
+                                <li>💾 下载翻译文件</li>
+                                <li>⭐ 查看质量评分</li>
+                                <li>🔄 重新翻译</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📄 PDF 排版翻译流程</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <h4>上传 PDF</h4>
+                            <p>选择需要翻译的 PDF 文件上传</p>
+                        </div>
+
+                        <div class="step">
+                            <h4>选择输出模式</h4>
+                            <p>选择输出格式：</p>
+                            <ul>
+                                <li><strong>overlay</strong> - 在原 PDF 上覆盖译文</li>
+                                <li><strong>bilingual</strong> - 生成双语对照文档</li>
+                            </ul>
+                        </div>
+
+                        <div class="step">
+                            <h4>等待处理</h4>
+                            <p>系统将自动解析 PDF、翻译文本、重建排版（约需 30-60 秒）</p>
+                        </div>
+
+                        <div class="step">
+                            <h4>下载结果</h4>
+                            <p>处理完成后，下载翻译后的 PDF 文件</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API 接口 -->
+            <div class="section" id="api">
+                <h2 class="section-title">API 接口</h2>
+
+                <div class="card">
+                    <h3>🔌 RESTful API 列表</h3>
+                    
+                    <table class="api-table">
+                        <thead>
+                            <tr>
+                                <th>方法</th>
+                                <th>端点</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="method-badge method-get">GET</span></td>
+                                <td><code>/health</code></td>
+                                <td>健康检查</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td><code>/api/upload-file</code></td>
+                                <td>上传文件（支持 OCR）</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td><code>/api/submit-text</code></td>
+                                <td>提交文本预处理</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td><code>/api/translate</code></td>
+                                <td>执行翻译</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td><code>/api/evaluate</code></td>
+                                <td>翻译质量评估 <span class="new-badge">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td><code>/api/translate-pdf</code></td>
+                                <td>PDF 排版翻译 <span class="new-badge">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td><code>/api/confirm-nouns</code></td>
+                                <td>确认术语</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-get">GET</span></td>
+                                <td><code>/api/report/errors</code></td>
+                                <td>获取错误日志</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>📊 翻译评估 API 示例</h3>
+                    <div class="code-block"><code>POST /api/evaluate
+Content-Type: application/json
+
+{
+  "originalText": "激光雷达系统是机器人导航核心组件",
+  "translatedText": "The LiDAR system is a core component of robot navigation",
+  "sourceLang": "ZH",
+  "targetLang": "EN"
+}</code></div>
+
+                    <p style="margin-top: 15px;"><strong>响应示例：</strong></p>
+                    <div class="code-block"><code>{
+  "success": true,
+  "evaluation": {
+    "totalScore": 96,
+    "grade": "A+",
+    "scores": {
+      "accuracy": 24,
+      "fluency": 25,
+      "terminology": 23,
+      "style": 24
+    },
+    "feedback": {
+      "accuracy": "翻译准确传达原意...",
+      "fluency": "语言流畅自然...",
+      "terminology": "专业术语使用正确...",
+      "style": "风格与原文匹配..."
+    },
+    "summary": "整体翻译质量优秀，可直接使用",
+    "suggestions": ["建议统一LiDAR术语格式"]
+  }
+}</code></div>
+                </div>
+
+                <div class="card">
+                    <h3>📄 PDF 翻译 API 示例</h3>
+                    <div class="code-block"><code>POST /api/translate-pdf
+Content-Type: multipart/form-data
+
+file: [PDF 文件]
+targetLang: EN
+outputMode: overlay  // 或 bilingual</code></div>
+
+                    <p style="margin-top: 15px;"><strong>响应：</strong>直接返回翻译后的 PDF 文件（application/pdf）</p>
+                </div>
+            </div>
+
+            <!-- 常见问题 -->
+            <div class="section" id="faq">
+                <h2 class="section-title">常见问题</h2>
+
+                <div class="card">
+                    <h3>❓ API 密钥如何获取？</h3>
+                    <ul style="line-height: 2; margin-left: 20px;">
+                        <li><strong>OpenAI API：</strong>访问 <a href="https://platform.openai.com/" target="_blank">platform.openai.com</a></li>
+                        <li><strong>DeepSeek API：</strong>访问 <a href="https://platform.deepseek.com/" target="_blank">platform.deepseek.com</a></li>
+                        <li><strong>TextIn OCR：</strong>访问 <a href="https://www.textin.com/" target="_blank">textin.com</a></li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>❓ 翻译报错 "API key invalid"</h3>
+                    <p><strong>解决方案：</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>检查 <code>.env</code> 文件中的 API 密钥是否正确</li>
+                        <li>确认 API 密钥没有过期</li>
+                        <li>检查账户余额是否充足</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>❓ OCR 识别效果不好怎么办？</h3>
+                    <p><strong>解决方案：</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>确保图片清晰度足够</li>
+                        <li>避免过度倾斜或扭曲</li>
+                        <li>确保文字区域光线充足</li>
+                        <li>TextIn 支持多语言混合识别</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>❓ PDF 翻译后排版错乱？</h3>
+                    <p><strong>解决方案：</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>确保原 PDF 是文字版（非扫描件）</li>
+                        <li>复杂表格建议使用 bilingual 模式</li>
+                        <li>系统会自动调整字号以适应空间</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>❓ 如何提高翻译质量评分？</h3>
+                    <p><strong>建议：</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>完善术语库，确保专业术语一致</li>
+                        <li>提供更多上下文信息</li>
+                        <li>使用预处理功能让 AI 理解文档领域</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 更新日志 -->
+            <div class="section" id="changelog">
+                <h2 class="section-title">更新日志</h2>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">📅 2025-11-30</div>
+                        <h4>v2.0.0 - 重大功能更新</h4>
+                        <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                            <li>✨ 新增 <strong>PDF 排版翻译</strong>功能，翻译后保持原始布局</li>
+                            <li>✨ 新增 <strong>翻译质量评分</strong>系统，DeepSeek 四维度严格评估</li>
+                            <li>✨ OCR 引擎升级为 <strong>TextIn</strong>，识别率大幅提升</li>
+                            <li>🔧 翻译引擎升级为 <strong>GPT-5.1</strong></li>
+                            <li>🔧 预处理引擎使用 <strong>DeepSeek</strong>，降低成本</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-date">📅 2025-11-29</div>
+                        <h4>v1.0.0 - 本地 Agent 架构</h4>
+                        <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                            <li>✨ 从 Dify API 迁移到本地 Agent 架构</li>
+                            <li>✨ 实现三个核心工具（飞书知识库、预处理、翻译）</li>
+                            <li>✨ 添加智能缓存机制</li>
+                            <li>✨ 支持长文本自动分段</li>
+                            <li>✨ 完善的错误处理和日志系统</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技术支持 -->
+            <div class="section">
+                <h2 class="section-title">技术支持</h2>
+
+                <div class="card">
+                    <h3>📚 项目文档</h3>
+                    <ul style="line-height: 2; margin-left: 20px;">
+                        <li><code>README.md</code> - 项目说明</li>
+                        <li><code>QUICKSTART.md</code> - 快速开始指南</li>
+                        <li><code>ENV-CONFIG.md</code> - 环境配置说明</li>
+                        <li><code>architecture.md</code> - 系统架构文档</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>🔍 日志位置</h3>
+                    <ul style="line-height: 2; margin-left: 20px;">
+                        <li><code>logs/combined.log</code> - 完整日志</li>
+                        <li><code>logs/error.log</code> - 错误日志</li>
+                    </ul>
+                    <p style="margin-top: 10px;">实时查看：<code>tail -f logs/combined.log</code></p>
+                </div>
+
+                <div class="highlight">
+                    <strong>💡 开发建议</strong><br>
+                    • 开发环境使用模拟数据测试，节省 API 调用<br>
+                    • 定期备份飞书术语库数据<br>
+                    • 监控 API 使用量和成本<br>
+                    • 大文件翻译建议使用分段处理
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p><strong>智能翻译系统</strong></p>
+            <p>基于 GPT-5.1 + DeepSeek 的企业级专业翻译解决方案</p>
+            <span class="version">v2.0.0</span>
+            <p style="margin-top: 20px; opacity: 0.7;">© 2025 All Rights Reserved</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  translate-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "3001:3001" # 如仅通过 nginx/负载均衡访问，可改为 127.0.0.1:3001:3001 限制外部访问
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - translate-app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx-default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./letsencrypt:/etc/letsencrypt # 将宿主机证书目录挂载进容器
+    restart: unless-stopped
+
+# 说明:
+# - 该 Compose 文件用于生产：它会构建镜像并暴露 3001 端口。
+# - 推荐在生产环境前面放置一个反向代理（nginx/云负载均衡）来终止 TLS 并反向代理到本容器的 3001 端口。
+# - .env 文件应放在仓库根目录（或通过 CI/CD 注入），包含所有敏感配置（不要提交到 Git）。

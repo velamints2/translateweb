@@ -1,0 +1,19 @@
+{
+  "name": "translation-mcp-server",
+  "version": "1.0.0",
+  "description": "本地化翻译MCP服务器",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@anthropic-ai/sdk": "^0.32.1",
+    "axios": "^1.5.0",
+    "dotenv": "^16.3.1"
+  }
+}
+
+

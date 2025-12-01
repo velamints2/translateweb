@@ -1,0 +1,3313 @@
+app:
+  description: 用于对需要翻译的文档做预处理的agent
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 专有名词提炼
+  use_icon_as_answer_icon: true
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.7@c4e7b999ae67bfc059f6f51630bed36def5a835d12b0251694f5784b5ff1cd95
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/feishu_document:0.0.1@7ffc4bd08dad6ca203ea343f2771de3ed4de2a19ed196b305d1ea7921370d7a7
+    version: null
+kind: app
+version: 0.5.0
+workflow:
+  conversation_variables:
+  - description: ''
+    id: 042916b0-a7c6-482e-92db-5e033442bba3
+    name: shu_y
+    selector:
+    - conversation
+    - shu_y
+    value: ''
+    value_type: string
+  - description: ''
+    id: 1f235c17-c11e-40f6-968b-6e5b8fa3d618
+    name: context
+    selector:
+    - conversation
+    - context
+    value: ''
+    value_type: string
+  - description: ''
+    id: 22af2f43-524e-4f1a-92e6-db731925ed55
+    name: times
+    selector:
+    - conversation
+    - times
+    value: ''
+    value_type: string
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: 你好!请输入你需要翻译的文本,我会把它整理成分析报告,并在专有名词库中查询对应翻译
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1762935448334-source-17633624371170-target
+      selected: false
+      source: '1762935448334'
+      sourceHandle: source
+      target: '17633624371170'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1763450403358-source-1762935448334-target
+      selected: false
+      source: '1763450403358'
+      sourceHandle: source
+      target: '1762935448334'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1763458814447-true-1763458860381-target
+      selected: false
+      source: '1763458814447'
+      sourceHandle: 'true'
+      target: '1763458860381'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: if-else
+      id: 1762768895086-source-1763460204083-target
+      selected: false
+      source: '1762768895086'
+      sourceHandle: source
+      target: '1763460204083'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 17633624371170-source-1763460247322-target
+      selected: false
+      source: '17633624371170'
+      sourceHandle: source
+      target: '1763460247322'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1763460204083-true-llm-target
+      selected: false
+      source: '1763460204083'
+      sourceHandle: 'true'
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 1763460247322-source-answer-target
+      selected: false
+      source: '1763460247322'
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 1763522634788-source-1763522681625-target
+      selected: false
+      source: '1763522634788'
+      sourceHandle: source
+      target: '1763522681625'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1763460204083-a7afcd3f-a42f-43c9-817d-0e169be5cadc-1763523813758-target
+      selected: false
+      source: '1763460204083'
+      sourceHandle: a7afcd3f-a42f-43c9-817d-0e169be5cadc
+      target: '1763523813758'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: llm-source-1763523989117-target
+      selected: false
+      source: llm
+      sourceHandle: source
+      target: '1763523989117'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1763523813758-source-1763524063863-target
+      selected: false
+      source: '1763523813758'
+      sourceHandle: source
+      target: '1763524063863'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: llm
+      id: 17635248437650-source-1763458605430-target
+      selected: false
+      source: '17635248437650'
+      sourceHandle: source
+      target: '1763458605430'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: answer
+        targetType: assigner
+      id: 1763524063863-source-1763948958074-target
+      selected: false
+      source: '1763524063863'
+      sourceHandle: source
+      target: '1763948958074'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1763991261933-false-1763991329119-target
+      selected: false
+      source: '1763991261933'
+      sourceHandle: 'false'
+      target: '1763991329119'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 17639913154120-source-17639915328980-target
+      selected: false
+      source: '17639913154120'
+      sourceHandle: source
+      target: '17639915328980'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 17639915328980-source-17639915596560-target
+      selected: false
+      source: '17639915328980'
+      sourceHandle: source
+      target: '17639915596560'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1762839926443-source-17639915596560-target
+      selected: false
+      source: '1762839926443'
+      sourceHandle: source
+      target: '17639915596560'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: llm-source-1763991261933-target
+      selected: false
+      source: llm
+      sourceHandle: source
+      target: '1763991261933'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1762839926443-source-17639915328980-target
+      selected: false
+      source: '1762839926443'
+      sourceHandle: source
+      target: '17639915328980'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 17639916398420-source-17633624371170-target
+      selected: false
+      source: '17639916398420'
+      sourceHandle: source
+      target: '17633624371170'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 17639916398420-source-1762935448334-target
+      selected: false
+      source: '17639916398420'
+      sourceHandle: source
+      target: '1762935448334'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1763991261933-true-17639916398420-target
+      selected: false
+      source: '1763991261933'
+      sourceHandle: 'true'
+      target: '17639916398420'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1763991261933-da18b8bf-36ad-450e-9050-ada5add900dd-1762839926443-target
+      selected: false
+      source: '1763991261933'
+      sourceHandle: da18b8bf-36ad-450e-9050-ada5add900dd
+      target: '1762839926443'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 1763991261933-da18b8bf-36ad-450e-9050-ada5add900dd-17639913154120-target
+      selected: false
+      source: '1763991261933'
+      sourceHandle: da18b8bf-36ad-450e-9050-ada5add900dd
+      target: '17639913154120'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 1763991261933-true-1763450403358-target
+      selected: false
+      source: '1763991261933'
+      sourceHandle: 'true'
+      target: '1763450403358'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 17639915596560-source-17639918287450-target
+      selected: false
+      source: '17639915596560'
+      sourceHandle: source
+      target: '17639918287450'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: 17639918287450-source-1763991896581-target
+      selected: false
+      source: '17639918287450'
+      sourceHandle: source
+      target: '1763991896581'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: 1763460204083-false-17639942271280-target
+      source: '1763460204083'
+      sourceHandle: 'false'
+      target: '17639942271280'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 17639942271280-true-17635248437650-target
+      source: '17639942271280'
+      sourceHandle: 'true'
+      target: '17635248437650'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 17639942271280-da18b8bf-36ad-450e-9050-ada5add900dd-17639942824090-target
+      source: '17639942271280'
+      sourceHandle: da18b8bf-36ad-450e-9050-ada5add900dd
+      target: '17639942824090'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: llm
+      id: 17639942824090-source-17639943072760-target
+      source: '17639942824090'
+      sourceHandle: source
+      target: '17639943072760'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 1763458605430-source-1763994360836-target
+      source: '1763458605430'
+      sourceHandle: source
+      target: '1763994360836'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 17639943072760-source-17639944126180-target
+      source: '17639943072760'
+      sourceHandle: source
+      target: '17639944126180'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: if-else
+      id: 1763994360836-source-1763458814447-target
+      source: '1763994360836'
+      sourceHandle: source
+      target: '1763458814447'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: if-else
+      id: 17639944126180-source-1763458814447-target
+      source: '17639944126180'
+      sourceHandle: source
+      target: '1763458814447'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: llm
+      id: 17639944126180-source-1763522634788-target
+      source: '17639944126180'
+      sourceHandle: source
+      target: '1763522634788'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: llm
+      id: 1763994360836-source-1763522634788-target
+      source: '1763994360836'
+      sourceHandle: source
+      target: '1763522634788'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1763458814447-false-1763460847056-target
+      source: '1763458814447'
+      sourceHandle: 'false'
+      target: '1763460847056'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: tool
+      id: 1763994360836-source-17640364203980-target
+      source: '1763994360836'
+      sourceHandle: source
+      target: '17640364203980'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: if-else
+      id: 17640364203980-source-1763458814447-target
+      source: '17640364203980'
+      sourceHandle: source
+      target: '1763458814447'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: assigner
+        targetType: tool
+      id: 17639944126180-source-17640364433660-target
+      source: '17639944126180'
+      sourceHandle: source
+      target: '17640364433660'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: if-else
+      id: 17640364433660-source-1763458814447-target
+      source: '17640364433660'
+      sourceHandle: source
+      target: '1763458814447'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: language_from
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: language_from
+        - default: ''
+          hint: ''
+          label: language_to
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: language_to
+      height: 135
+      id: '1762768895086'
+      position:
+        x: -1.7036627609036117
+        y: 769
+      positionAbsolute:
+        x: -1.7036627609036117
+        y: 769
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params: {}
+          mode: chat
+          name: deepseek-reasoner
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: d0eda0eb-6208-4d1d-9c51-2601d4f57a29
+          role: system
+          text: '你的任务是作为翻译系统的「理解与术语预处理智能体」。
+
+            你会收到一段中文原文。
+
+            请**不要翻译内容本身**，你将收到一段**中文原文**你将会把他翻译为{{#1762768895086.language_to#}}语言(语言代码使用ISO
+            639-1标准。)，你的目标是：
+
+            理解原文、提取术语、给出翻译策略，并为后续“翻译执行智能体”提供结构化输入。
+
+            【核心硬性规则】（必须遵守）
+
+            报告主体语言 = 中文
+
+            允许出现目标语言的唯一位置：
+
+            仅限于第 3 部分表格的「建议翻译」列
+
+            其他任何位置不得出现目标语言、不得出现整段外语。
+
+            禁止翻译报告本身
+
+            你不能把标题、要点、策略、总结翻译成{{#1762768895086.language_to#}}语言。
+
+            自检规则（非常重要）：
+
+            输出前请自检：
+
+            如果“建议翻译方向/目标语言示例列之外”出现任何非中文句子或词组，说明你违规，需要在内部修正后再输出。
+
+
+
+            ---
+
+
+            🎯【主要目标】
+
+            - 准确理解中文原文的内容、结构、表达风格
+
+            - 提取高频词、专业术语、缩略词等
+
+            - 识别行业黑话、可能导致歧义的表达
+
+            - 主动生成问题，邀请用户确认术语含义与翻译风格偏好
+
+            - 输出结构化结果供翻译执行智能体使用
+
+
+            ---
+
+
+            📦【你的输出结构】：
+
+
+            ## 1. 文档用途与语境识别
+
+            - 所属领域（如技术 / 医学 / 市场 / 法律）：
+
+            - 文体风格（如正式、科普、口语、广告语等）：
+
+            - 推测翻译用途（如国际发布 / 内部对照 / 外部合作文件等）：
+
+
+            ## 2. 内容结构摘要（按段或逻辑块）
+
+            - P1: 【总结内容主旨】
+
+            - P2: ...
+
+            （每段写 1-2 句简要总结）
+
+
+            ## 3. 高频术语 & 特殊表达提取
+
+            请重点提取：
+
+            - 多次出现的关键词
+
+            - 缩略词（如 KPI、PPT、B2B）
+
+            - 行业黑话、模糊表达（如 “闭环”、“颗粒度”、“打穿”、“抓手”等）
+
+
+            输出表格：
+
+            注意输出顺序按照“用户需确认排序”
+
+            | 中文术语 | 出现次数 | 可能含义（AI推测） | 建议翻译方向 | 用户需确认 |
+
+
+
+            ## 4. 翻译建议策略（供后续翻译智能体使用）
+
+            - 建议翻译风格（如正式、自然、营销型、学术型等）：
+
+            - 是否应意译/重构句式以符合目标语言表达？
+
+            - 是否允许拆分长句？
+
+
+            ---
+
+
+            注意：
+
+            - 你不需要输出翻译文本
+
+            - 所有术语与风格判断应基于全文上下文理解
+
+            - 保证输出结构完整，便于下一阶段使用
+
+            '
+        selected: false
+        title: 翻译报告预处理
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: llm
+      position:
+        x: 704
+        y: 434
+      positionAbsolute:
+        x: 704
+        y: 434
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#17633624371170.text#}}'
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 103
+      id: answer
+      position:
+        x: 2836
+        y: 160
+      positionAbsolute:
+        x: 2836
+        y: 160
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import re\n\ndef split_output_by_sections(full_output: str) -> dict:\n\
+          \    \"\"\"\n    按标题切分预处理智能体的输出内容\n    \"\"\"\n    section_patterns = {\n\
+          \        \"document_usage\": r\"##\\s*1\\.\\s*文档用途与语境识别\\s*\\n(.*?)(?=##\\\
+          s*2\\.|$)\",\n        \"content_summary\": r\"##\\s*2\\.\\s*内容结构摘要.*?\\\
+          n(.*?)(?=##\\s*3\\.|$)\", \n        \"terminology_extraction\": r\"##\\\
+          s*3\\.\\s*高频术语.*?\\n(.*?)(?=##\\s*4\\.|$)\",\n        \"translation_strategy\"\
+          : r\"##\\s*4\\.\\s*翻译建议策略.*?\\n(.*?)(?=##|$)\"\n    }\n\n    result = {}\n\
+          \    for section_name, pattern in section_patterns.items():\n        match\
+          \ = re.search(pattern, full_output, re.DOTALL | re.IGNORECASE)\n       \
+          \ result[section_name] = match.group(1).strip() if match else \"\"\n\n \
+          \   return result\n\ndef main(full_output: str) -> dict:\n    \"\"\"\n \
+          \   Dify 工作流主函数\n    输入: full_output - 预处理智能体的完整输出\n    输出: 包含各章节切片结果的字典，附加\
+          \ terminology_extraction 字段\n    \"\"\"\n    try:\n        if not full_output\
+          \ or not isinstance(full_output, str):\n            return {\n         \
+          \       \"success\": False,\n                \"sections\": {},\n       \
+          \         \"section_count\": 0,\n                \"terminology_extraction\"\
+          : \"\",\n                \"message\": \"输入为空或不是字符串\"\n            }\n\n\
+          \        sections = split_output_by_sections(full_output)\n        non_empty_count\
+          \ = len([v for v in sections.values() if v])\n\n        return {\n     \
+          \       \"success\": True,\n            \"sections\": sections,\n      \
+          \      \"section_count\": non_empty_count,\n            \"terminology_extraction\"\
+          : sections.get(\"terminology_extraction\", \"\"),\n            \"message\"\
+          : f\"成功切分出 {non_empty_count} 个章节\"\n        }\n\n    except Exception as\
+          \ e:\n        return {\n            \"success\": False,\n            \"\
+          sections\": {},\n            \"section_count\": 0,\n            \"terminology_extraction\"\
+          : \"\",\n            \"message\": f\"处理过程中发生错误: {str(e)}\"\n        }\n"
+        code_language: python3
+        outputs:
+          message:
+            children: null
+            type: string
+          section_count:
+            children: null
+            type: number
+          sections:
+            children: null
+            type: object
+          success:
+            children: null
+            type: boolean
+          terminology_extraction:
+            children: null
+            type: string
+        selected: false
+        title: 内容切分
+        type: code
+        variables:
+        - value_selector:
+          - llm
+          - text
+          value_type: string
+          variable: full_output
+      height: 52
+      id: '1762839926443'
+      position:
+        x: 1428
+        y: 506
+      positionAbsolute:
+        x: 1428
+        y: 506
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import csv\nimport json\nimport os\nimport re\nfrom typing import List,\
+          \ Dict, Optional\n\nclass TerminologySearch:\n    def __init__(self, csv_file:\
+          \ str = \"terminology.csv\", template_text: Optional[str] = None):\n   \
+          \     self.csv_file = csv_file\n        self.template_text = template_text\n\
+          \        self._terms_cache = None\n        self._last_load_time = None\n\
+          \n    def _load_terms(self) -> List[Dict]:\n        \"\"\"加载术语数据：优先使用 template_text，其次\
+          \ CSV\"\"\"\n        try:\n            # 如果传入了模板文本，则解析并返回\n            if\
+          \ self.template_text:\n                return self._parse_template_text(self.template_text)\n\
+          \n            current_mtime = os.path.getmtime(self.csv_file) if os.path.exists(self.csv_file)\
+          \ else 0\n            \n            if (self._terms_cache is not None and\
+          \ \n                self._last_load_time == current_mtime):\n          \
+          \      return self._terms_cache\n                \n            terms = []\n\
+          \            if os.path.exists(self.csv_file):\n                with open(self.csv_file,\
+          \ 'r', encoding='utf-8') as f:\n                    reader = csv.DictReader(f)\n\
+          \                    terms = list(reader)\n                self._terms_cache\
+          \ = terms\n                self._last_load_time = current_mtime\n      \
+          \      return terms\n        except Exception as e:\n            print(f\"\
+          读取术语失败: {e}\")\n            return []\n\n    def _parse_template_text(self,\
+          \ template_text: str) -> List[Dict]:\n        \"\"\"解析模板文本，提取术语信息\"\"\"\n\
+          \        try:\n            terms_data = []\n            \n            #\
+          \ 清理模板文本，移除注释和空行\n            lines = [line.strip() for line in template_text.split('\\\
+          n') if line.strip() and not line.strip().startswith('#')]\n            \n\
+          \            # 合并所有行，然后按逗号分割\n            combined_text = ''.join(lines)\n\
+          \            pairs = [pair.strip() for pair in combined_text.split(',')\
+          \ if pair.strip()]\n            \n            for pair in pairs:\n     \
+          \           # 按冒号分割中文和英文\n                if ':' in pair:\n            \
+          \        parts = pair.split(':', 1)  # 只分割第一个冒号\n                    if\
+          \ len(parts) == 2:\n                        zh_term = parts[0].strip()\n\
+          \                        en_term = parts[1].strip()\n                  \
+          \      if zh_term and en_term:\n                            terms_data.append({\n\
+          \                                'term_zh': zh_term,\n                 \
+          \               'term_en': en_term,\n                                'domain':\
+          \ '通用'\n                            })\n            \n            return\
+          \ terms_data\n        except Exception as e:\n            print(f\"解析模板文本失败:\
+          \ {e}\")\n            return []\n\ndef _parse_markdown_table(self, table_text:\
+          \ str) -> List[Dict]:\n    lines = table_text.strip().split('\\n')\n   \
+          \ # 找到第一行以 | 开头的，视为表头\n    table_lines = [line for line in lines if line.strip().startswith('|')]\n\
+          \    if len(table_lines) < 2:\n        return []\n    \n    header_line\
+          \ = table_lines[0].strip('| ')\n    headers = [h.strip() for h in header_line.split('|')]\n\
+          \    \n    terms_data = []\n    # table_lines[1] 通常是 '---' 分隔线，从 table_lines[2]\
+          \ 开始才是数据行\n    for line in table_lines[2:]:\n        line = line.strip('|\
+          \ ')\n        if not line or line.startswith('---'):\n            continue\n\
+          \        cells = [cell.strip() for cell in line.split('|')]\n        if\
+          \ len(cells) >= len(headers):\n            term_info = {}\n            for\
+          \ i, header in enumerate(headers):\n                if i < len(cells):\n\
+          \                    term_info[header] = cells[i]\n            terms_data.append(term_info)\n\
+          \    return terms_data\n\n    def _calculate_match_score(self, term: Dict,\
+          \ search_term: str) -> int:\n        \"\"\"计算匹配分数\"\"\"\n        try:\n\
+          \            score = 0\n            search_lower = search_term.lower()\n\
+          \            zh_term = term.get('term_zh', '').lower()\n            \n \
+          \           # 精确匹配中文术语\n            if zh_term == search_lower:\n      \
+          \          score += 100\n            elif zh_term.startswith(search_lower):\n\
+          \                score += 50\n            elif search_lower in zh_term:\n\
+          \                score += 10\n                \n            return score\n\
+          \        except:\n            return 0\n\n    def search_single_term(self,\
+          \ chinese_term: str, max_results: int = 5) -> Dict:\n        \"\"\"查询单个中文术语\"\
+          \"\"\n        try:\n            if not chinese_term or not chinese_term.strip():\n\
+          \                return {\"found\": False, \"error\": \"术语不能为空\"}\n    \
+          \            \n            chinese_term = chinese_term.strip()\n       \
+          \     terms = self._load_terms()\n            \n            if not terms:\n\
+          \                return {\"found\": False, \"message\": \"术语库为空或无法读取\"}\n\
+          \            \n            scored_terms = []\n            for term in terms:\n\
+          \                score = self._calculate_match_score(term, chinese_term)\n\
+          \                if score > 0:\n                    term_copy = term.copy()\n\
+          \                    term_copy['match_score'] = score\n                \
+          \    scored_terms.append(term_copy)\n            \n            scored_terms.sort(key=lambda\
+          \ x: x['match_score'], reverse=True)\n            \n            if scored_terms:\n\
+          \                best_match = scored_terms[0]\n                is_exact\
+          \ = (chinese_term.lower() == best_match.get('term_zh', '').lower())\n  \
+          \              \n                return {\n                    \"found\"\
+          : True,\n                    \"chinese_term\": chinese_term,\n         \
+          \           \"translation\": best_match.get('term_en', ''),\n          \
+          \          \"source_term\": best_match.get('term_zh', ''),\n           \
+          \         \"domain\": best_match.get('domain', '通用'),\n                \
+          \    \"match_type\": \"exact\" if is_exact else \"fuzzy\",\n           \
+          \         \"match_score\": best_match['match_score'],\n                \
+          \    \"all_matches\": scored_terms[:max_results],\n                    \"\
+          total_matches\": len(scored_terms)\n                }\n            else:\n\
+          \                return {\"found\": False, \"chinese_term\": chinese_term}\n\
+          \                \n        except Exception as e:\n            return {\"\
+          found\": False, \"error\": str(e)}\n\n    def batch_search_terms(self, terminology_extraction_text:\
+          \ str) -> Dict:\n        \"\"\"批量查询术语表中的所有中文术语，返回字典格式\"\"\"\n        try:\n\
+          \            # 解析需要查询的术语表格\n            extracted_terms = self._parse_markdown_table(terminology_extraction_text)\n\
+          \            if not extracted_terms:\n                return {\"error\"\
+          : \"无法解析术语表格\"}\n            \n            results_dict = {}\n         \
+          \   \n            for term_data in extracted_terms:\n                chinese_term\
+          \ = term_data.get('中文术语', '').strip()\n                if not chinese_term:\n\
+          \                    continue\n                    \n                search_result\
+          \ = self.search_single_term(chinese_term)\n                \n          \
+          \      # 即使没找到也记录结果，但添加额外信息\n                search_result['occurrence_count']\
+          \ = term_data.get('出现次数', '')\n                search_result['ai_meaning']\
+          \ = term_data.get('可能含义（AI推测）', '')\n                search_result['suggested_translation']\
+          \ = term_data.get('建议翻译方向', '')\n                search_result['needs_confirmation']\
+          \ = term_data.get('用户需确认', '') == '是'\n                \n              \
+          \  results_dict[chinese_term] = search_result\n            \n          \
+          \  return results_dict\n\n        except Exception as e:\n            return\
+          \ {\"error\": f\"批量查询术语时发生错误: {str(e)}\"}\n\n\n# === Dify主函数 ===\ndef main(user_input:\
+          \ str, terminology_template_text: Optional[str] = None) -> dict:\n    \"\
+          \"\"\n    Dify工作流主函数\n    输入:\n        user_input: 需要查询的术语表格\n        terminology_template_text:\
+          \ 已知的翻译对照表（术语库）\n    \"\"\"\n    try:\n        searcher = TerminologySearch(template_text=terminology_template_text)\n\
+          \n        # 直接使用用户输入作为需要查询的术语表格\n        terminology_text = user_input.strip()\n\
+          \        \n        if not terminology_text:\n            return {\n    \
+          \            \"success\": False,\n                \"terminology_results\"\
+          : \"{}\",\n                \"message\": \"输入不能为空\"\n            }\n    \
+          \    \n        # 进行批量查询\n        terminology_results = searcher.batch_search_terms(terminology_text)\n\
+          \        \n        # 检查是否有错误\n        if \"error\" in terminology_results:\n\
+          \            return {\n                \"success\": False,\n           \
+          \     \"terminology_results\": \"{}\",\n                \"message\": terminology_results[\"\
+          error\"]\n            }\n        \n        # 将术语结果转换为格式化的字符串\n        terminology_results_str\
+          \ = format_terminology_results(terminology_results)\n        \n        return\
+          \ {\n            \"success\": True,\n            \"terminology_results\"\
+          : terminology_results_str,\n            \"message\": \"术语查询完成\"\n      \
+          \  }\n        \n    except Exception as e:\n        return {\n         \
+          \   \"success\": False,\n            \"terminology_results\": \"{}\",\n\
+          \            \"message\": f\"处理过程中发生错误: {str(e)}\"\n        }\n\n\ndef format_terminology_results(results_dict:\
+          \ Dict) -> str:\n    \"\"\"将术语查询结果格式化为易读的字符串\"\"\"\n    if not results_dict:\n\
+          \        return \"未找到匹配的术语\"\n    \n    formatted_lines = []\n    \n   \
+          \ for term, result in results_dict.items():\n        if result.get('found',\
+          \ False):\n            formatted_lines.append(f\"【{term}】\")\n         \
+          \   formatted_lines.append(f\"  翻译: {result.get('translation', '')}\")\n\
+          \            formatted_lines.append(f\"  匹配度: {result.get('match_score',\
+          \ 0)} ({result.get('match_type', 'unknown')})\")\n            formatted_lines.append(f\"\
+          \  领域: {result.get('domain', '通用')}\")\n            formatted_lines.append(f\"\
+          \  出现次数: {result.get('occurrence_count', '')}\")\n            formatted_lines.append(f\"\
+          \  AI推测含义: {result.get('ai_meaning', '')}\")\n            formatted_lines.append(f\"\
+          \  建议翻译方向: {result.get('suggested_translation', '')}\")\n            formatted_lines.append(f\"\
+          \  需确认: {'是' if result.get('needs_confirmation', False) else '否'}\")\n \
+          \           formatted_lines.append(\"\")\n        else:\n            formatted_lines.append(f\"\
+          【{term}】 - 未找到匹配的翻译\")\n            formatted_lines.append(f\"  出现次数: {result.get('occurrence_count',\
+          \ '')}\")\n            formatted_lines.append(f\"  AI推测含义: {result.get('ai_meaning',\
+          \ '')}\")\n            formatted_lines.append(f\"  建议翻译方向: {result.get('suggested_translation',\
+          \ '')}\")\n            formatted_lines.append(f\"  需确认: {'是' if result.get('needs_confirmation',\
+          \ False) else '否'}\")\n            formatted_lines.append(\"\")\n    \n\
+          \    return \"\\n\".join(formatted_lines)\n\n\n# === Dify输出设置 ===\ntry:\n\
+          \    if 'user_input' in locals():\n        user_input_val = locals().get('user_input',\
+          \ '')\n        template_text_val = locals().get('terminology_template_text',\
+          \ '')\n        result = main(user_input_val, terminology_template_text=template_text_val)\n\
+          \n    elif 'inputs' in locals() and isinstance(locals().get('inputs'), dict):\n\
+          \        user_input_val = locals()['inputs'].get('user_input', '')\n   \
+          \     template_text_val = locals()['inputs'].get('terminology_template_text',\
+          \ '')\n        result = main(user_input_val, terminology_template_text=template_text_val)\n\
+          \n    else:\n        result = {\n            \"success\": False,\n     \
+          \       \"terminology_results\": \"{}\",\n            \"message\": \"未找到输入数据\"\
+          \n        }\n\n    outputs = result\n\nexcept Exception as e:\n    outputs\
+          \ = {\n        \"success\": False,\n        \"terminology_results\": \"\
+          {}\",\n        \"message\": f\"执行过程中发生错误: {str(e)}\"\n    }"
+        code_language: python3
+        outputs:
+          message:
+            children: null
+            type: string
+          success:
+            children: null
+            type: boolean
+          terminology_results:
+            children: null
+            type: string
+        selected: false
+        title: 数据查询
+        type: code
+        variables:
+        - value_selector:
+          - '17639916398420'
+          - terminology_extraction
+          value_type: string
+          variable: user_input
+        - value_selector:
+          - '1763450403358'
+          - text
+          value_type: string
+          variable: terminology_template_text
+      height: 52
+      id: '1762935448334'
+      position:
+        x: 1790
+        y: 248
+      positionAbsolute:
+        x: 1790
+        y: 248
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        memory:
+          query_prompt_template: '{{#17639916398420.terminology_extraction#}}
+
+            {{#1762935448334.terminology_results#}}
+
+            {{#llm.text#}}
+
+            这个忽略掉:
+
+            {{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: d0eda0eb-6208-4d1d-9c51-2601d4f57a29
+          role: system
+          text: "你现在的角色是\"术语确认与写入决策智能体\"。\n\n你会收到两个输入：\n输入 A：术语预处理智能体的输出（术语列表）\n输入\
+            \ B：数据库查询模块返回的术语检索结果\n输入 C:  初始的报告模版\n\U0001F3AF 你的任务\n基于上述三个输入，为客户生成结构化输出，包含：\n\
+            1. 文档基本信息和分析概览\n2. 按出现顺序列出所有待确认术语（分为已有翻译和新术语）\n3. 自动生成客户确认文案\n\n\U0001F4E6\
+            \ 【你的输出要求】\n\n### 第一部分：文档分析与翻译建议\n## \U0001F4CB 文档基本信息\n- **所属领域**：\n\
+            - **文体风格**：\n- **翻译用途**：\n\n## \U0001F3D7️ 内容结构概览\n\n\n### 第二部分：术语分类整理\n\
+            \n## 1. 数据库中已有翻译（待确认）\n| 中文术语 | 当前翻译 | 是否建议沿用 | 备注 |\n|---------|---------|------------|------|\n\
+            | [根据输入B填充] | [数据库中的翻译] | [模型判断] | [多义性/风格差异说明] |\n\n## 2. 新术语（建议翻译，待确认）\n\
+            | 中文术语 | 建议翻译 | 建议理由 | 客户需确认 |\n|---------|---------|---------|-----------|\n\
+            | [根据输入A填充] | [系统建议翻译] | [基于AI推测含义] | [是/否] |\n\n### 第三部分：确认文案\n\n## 3.\
+            \ 给客户的确认文案\n\n您好，我们从您的机器人技术文档中识别到[X]个专业术语。为确保后续翻译的一致性和准确性，请您确认以下术语的译法：\n\
+            \n**① 数据库已有的翻译（需要您确认）**\n- [列出需要确认的已有翻译术语]\n\n**② 数据库尚未收录的术语（请确认是否采纳系统建议）**\n\
+            - **建议采纳的术语**（系统推荐，可直接使用）：\n  [列出不需要客户确认的新术语]\n  \n- **需要您重点确认的术语**（多义性或需要风格选择）：\n\
+            \  [列出需要客户确认的新术语]\n\n请您：\n✓ 确认现有翻译是否继续沿用\n✓ 对建议翻译选择\"确认采用\"或\"提供替代译法\"\
+            \n✓ 确认是否将这些术语存入术语数据库\n\n您的确认将帮助我们建立统一的术语标准，确保后续翻译质量。确认后，系统将自动更新术语数据库（CSV文件）,如果有对翻译风格的其他建议,也可以一并发给我。\n\
+            \n### 第四部分：补充信息\n\n## \U0001F3AF 翻译策略建议\n- **翻译风格**：\n- **句式处理**：\n- **技术准确性**："
+        selected: false
+        title: 术语确认
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '17633624371170'
+      position:
+        x: 2152
+        y: 170
+      positionAbsolute:
+        x: 2152
+        y: 170
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            ja_JP: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            pt_BR: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            zh_Hans: 飞书文档的唯一标识，支持输入文档的 URL。
+          label:
+            en_US: document_id
+            ja_JP: document_id
+            pt_BR: document_id
+            zh_Hans: 飞书文档的唯一标识
+          llm_description: 飞书文档的唯一标识，支持输入文档的 URL。
+          max: null
+          min: null
+          name: document_id
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: markdown
+          form: form
+          human_description:
+            en_US: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            ja_JP: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            pt_BR: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            zh_Hans: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          label:
+            en_US: mode
+            ja_JP: mode
+            pt_BR: mode
+            zh_Hans: 文档返回格式
+          llm_description: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          max: null
+          min: null
+          name: mode
+          options:
+          - icon: ''
+            label:
+              en_US: text
+              ja_JP: text
+              pt_BR: text
+              zh_Hans: text
+            value: text
+          - icon: ''
+            label:
+              en_US: markdown
+              ja_JP: markdown
+              pt_BR: markdown
+              zh_Hans: markdown
+            value: markdown
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        - auto_generate: null
+          default: '0'
+          form: form
+          human_description:
+            en_US: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            ja_JP: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            pt_BR: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            zh_Hans: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+              0。
+
+              '
+          label:
+            en_US: lang
+            ja_JP: lang
+            pt_BR: lang
+            zh_Hans: 指定@用户的语言
+          llm_description: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+            0。
+
+            '
+          max: null
+          min: null
+          name: lang
+          options:
+          - icon: ''
+            label:
+              en_US: User's default name
+              ja_JP: User's default name
+              pt_BR: User's default name
+              zh_Hans: 用户的默认名称
+            value: '0'
+          - icon: ''
+            label:
+              en_US: User's English name
+              ja_JP: User's English name
+              pt_BR: User's English name
+              zh_Hans: 用户的英文名称
+            value: '1'
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        params:
+          document_id: ''
+          lang: ''
+          mode: ''
+        provider_id: langgenius/feishu_document/feishu_document
+        provider_name: langgenius/feishu_document/feishu_document
+        provider_type: builtin
+        selected: false
+        title: 加载对照翻译数据库
+        tool_configurations:
+          lang:
+            type: constant
+            value: '0'
+          mode:
+            type: constant
+            value: markdown
+        tool_description: 获取飞书云文档的内容
+        tool_label: 获取飞书云文档的内容
+        tool_name: get_document_content
+        tool_node_version: '2'
+        tool_parameters:
+          document_id:
+            type: mixed
+            value: https://ay8sh8gpeb.feishu.cn/wiki/SON5wso6CiO5UYkk89fc4wo4nBe?from=from_copylink
+        type: tool
+      height: 114
+      id: '1763450403358'
+      position:
+        x: 1428
+        y: 312
+      positionAbsolute:
+        x: 1428
+        y: 312
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params: {}
+          mode: chat
+          name: deepseek-reasoner
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: c9feee00-c303-4a43-ab02-a13c6ce966e7
+          role: system
+          text: '术语确认与存储决策
+
+            角色
+
+            你是术语管理专家，负责根据用户反馈决定术语是否存入CSV数据库，并避免重复存储已有术语。
+
+            输入信息
+
+            系统已生成的术语翻译建议（包括数据库已有的术语和新术语）
+
+            数据库已有的术语列表（格式：中文术语:当前翻译）
+
+            用户的自然语言反馈
+
+            决策规则
+
+            1. 判断存储意向
+
+            分析用户输入，判断是否同意存储术语：
+
+            同意信号：用户使用"确认"、"存入"、"采用"、"保存"、"添加到数据库"等肯定词语
+
+            部分同意：用户只确认部分术语或提出修改建议
+
+            拒绝信号：用户说"不存"、"暂缓"、"再考虑"等否定词语
+
+            2. 提取确认的术语
+
+            从用户输入中识别：
+
+            明确确认的术语列表
+
+            用户提供的替代翻译
+
+            需要排除的术语
+
+            3. 过滤已有术语（关键新增规则）
+
+            检查数据库状态：对比用户确认的术语与数据库已有的术语列表
+
+            只存储新内容：
+
+            如果术语是新的（不在数据库中），则存储
+
+            如果术语已存在但用户提供了新的翻译（修改），则存储更新后的翻译
+
+            如果术语已存在且用户确认了现有翻译，则不重复存储
+
+            避免冗余：确保输出中只包含需要实际添加到数据库的术语
+
+            4. 输出格式要求
+
+            如果用户同意存储：
+
+            只输出需要存储的术语对（新术语或修改过的术语）：
+
+            中文术语1:英文翻译1,中文术语2:英文翻译2,中文术语3:英文翻译3,
+
+            如果用户不同意存储：
+
+            用户未确认存储术语
+
+            如果用户部分确认：
+
+            只输出用户明确确认且需要存储的术语对（新术语或修改过的术语）
+
+            处理示例
+
+            示例1：用户完全确认，但数据库已有部分术语
+
+            数据库已有：定位得分:localization score, 建图:mapping
+
+            用户输入："确认所有术语，按建议翻译存入数据库"
+
+            输出："重影:ghosting,定位丢失:localization loss,乱走:erratic movement,虚影:phantom
+            shadow,扩建:area expansion,激光雷达:LiDAR,点云数据:point cloud data,禁区:restricted
+            area,跑测:test run,"
+
+            （说明：定位得分和建图已存在，因此不重复输出）
+
+            示例2：用户部分确认并修改，数据库已有部分术语
+
+            数据库已有：激光雷达:LiDAR, 点云数据:point cloud data
+
+            用户输入："重影用ghosting,虚影用blurring,禁区用no-go zone,其他按建议存入"
+
+            输出："重影:ghosting,虚影:blurring,禁区:no-go zone,定位得分:localization score,定位丢失:localization
+            loss,乱走:erratic movement,建图:mapping,扩建:area expansion,跑测:test run,"
+
+            （说明：激光雷达和点云数据已存在且用户未修改，因此不输出）
+
+            示例3：用户拒绝存储
+
+            用户输入："暂时不存入数据库，需要再确认"
+
+            输出："用户未确认存储术语"
+
+            示例4：用户只确认新术语
+
+            数据库已有：定位得分:localization score, 激光雷达:LiDAR
+
+            用户输入："只存入重影和虚影，其他不变"
+
+            输出："重影:ghosting,虚影:phantom shadow,"
+
+            （说明：只输出用户明确确认的新术语，已有术语不处理）
+
+            注意事项
+
+            严格按照"中文:英文"格式，用逗号分隔
+
+            只包含用户明确确认且需要存储的术语（新术语或修改过的术语）
+
+            优先使用用户提供的替代翻译
+
+            保持术语顺序的一致性（按用户确认顺序或原文出现顺序）
+
+            确保翻译准确性和专业性
+
+            核心原则：避免重复存储，只添加数据库中不存在或需要更新的术语
+
+            现在请根据用户输入和数据库状态做出决策并输出相应结果。'
+        - id: aa21a348-4f9d-4329-97d7-c588feaebaf1
+          role: user
+          text: '系统已生成的术语翻译建议
+
+            {{#conversation.times#}}
+
+            数据库已有的术语列表
+
+            {{#17635248437650.text#}}
+
+            用户的自然语言反馈
+
+            {{#sys.query#}}'
+        reasoning_format: separated
+        selected: false
+        title: 术语确认
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1763458605430'
+      position:
+        x: 1408
+        y: 1212
+      positionAbsolute:
+        x: 1408
+        y: 1212
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 2bacd125-0c07-4f38-8a37-b9bd8b1dde7c
+            value: 用户未确认储存术语
+            varType: string
+            variable_selector:
+            - conversation
+            - shu_y
+          - comparison_operator: not contains
+            id: fc57537b-68bd-40a4-9179-0efed5f75714
+            value: ':'
+            varType: string
+            variable_selector:
+            - conversation
+            - shu_y
+          - comparison_operator: not contains
+            id: 5ccbbb29-9235-4ebb-b673-f46461bd3c7a
+            value: ','
+            varType: string
+            variable_selector:
+            - conversation
+            - shu_y
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 176
+      id: '1763458814447'
+      position:
+        x: 2474
+        y: 1026
+      positionAbsolute:
+        x: 2474
+        y: 1026
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: okok,没有在飞书文档中新增内容,如果需要直接开始翻译,请回复:开始翻译
+        selected: false
+        title: 直接回复 2
+        type: answer
+        variables: []
+      height: 116
+      id: '1763458860381'
+      position:
+        x: 2836
+        y: 903
+      positionAbsolute:
+        x: 2836
+        y: 903
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: empty
+            id: fc29c16a-0dd3-4eaf-ace0-db603077b9b3
+            numberVarType: constant
+            value: '1000'
+            varType: number
+            variable_selector:
+            - conversation
+            - times
+          id: 'true'
+          logical_operator: and
+        - case_id: a7afcd3f-a42f-43c9-817d-0e169be5cadc
+          conditions:
+          - comparison_operator: is
+            id: 46b171f3-c0e8-4274-a725-6582d4886e2f
+            value: 开始翻译
+            varType: string
+            variable_selector:
+            - sys
+            - query
+          id: a7afcd3f-a42f-43c9-817d-0e169be5cadc
+          logical_operator: and
+        selected: false
+        title: 判断用户意图
+        type: if-else
+      height: 172
+      id: '1763460204083'
+      position:
+        x: 342
+        y: 751
+      positionAbsolute:
+        x: 342
+        y: 751
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '17633624371170'
+          - text
+          variable_selector:
+          - conversation
+          - times
+          write_mode: over-write
+        selected: false
+        title: 存储报告
+        type: assigner
+        version: '2'
+      height: 84
+      id: '1763460247322'
+      position:
+        x: 2494
+        y: 170
+      positionAbsolute:
+        x: 2494
+        y: 170
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '好的,已经帮您把这些词存进去了:{{#conversation.shu_y#}},
+
+          如果需要直接开始翻译,请回复:开始翻译'
+        selected: false
+        title: 直接回复 3
+        type: answer
+        variables: []
+      height: 136
+      id: '1763460847056'
+      position:
+        x: 2836
+        y: 1099
+      positionAbsolute:
+        x: 2836
+        y: 1099
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 13710084-a4ef-42cc-bf3c-2ee6b406d6a9
+          role: system
+          text: '角色
+
+            你是报告模板更新专家，专门负责根据用户确认的术语更新报告模板中的术语整理部分，将其简化为中文-{{#1762768895086.language_to#}}(语言代码使用ISO
+            639-1标准)翻译对照表。
+
+            输入信息
+
+            原始报告模板
+
+            用户的自然语言反馈
+
+            确认要更新的术语
+
+            更新规则
+
+            1. 解析术语对
+
+            将输入的术语对字符串解析为键值对：
+
+            分割逗号分隔的术语对
+
+            解析每个"中文:英文"格式的术语
+
+            建立中文术语到英文翻译的映射表
+
+            2. 更新报告模板结构
+
+            主要变更：
+
+            移除第三部分：完全删除"确认文案"部分
+
+            简化第二部分：将原有的复杂表格替换为简单的中文-英文翻译对照表
+
+            保持其他部分：第一部分和第四部分内容保持不变
+
+            具体更新：
+
+            将"第二部分：术语分类整理"改为"第二部分：术语翻译对照表"
+
+            使用简单的两列表格：| 中文术语 | {{#1762768895086.language_to#}}翻译 |
+
+            只包含用户确认的术语对
+
+            按术语在原文中出现的顺序或用户确认顺序排列
+
+            3. 处理特殊情况
+
+            用户提供替代翻译：使用用户提供的翻译
+
+            部分确认：只包含用户明确确认的术语
+
+            术语不存在：如果确认的术语不在原报告中，添加到对照表末尾
+
+            重复术语：确保每个中文术语只出现一次
+
+            输出要求
+
+            输出格式
+
+            返回完整的更新后报告模板，保持原有的Markdown格式和结构。
+
+            输出内容
+
+            更新后的术语翻译对照表（简单中文-英文两列表）
+
+            移除第三部分（确认文案）
+
+            保持第一部分和第四部分不变
+
+            确保格式规范，表格对齐
+
+            更新后的模板结构
+
+            text
+
+            ### 第一部分：文档分析与翻译建议
+
+            ## 📋 文档基本信息
+
+            - **所属领域**：
+
+            - **文体风格**：
+
+            - **翻译用途**：
+
+
+            ## 🏗️ 内容结构概览
+
+
+            ### 第二部分：术语翻译对照表
+
+            | 中文术语 | 英文翻译 |
+
+            |---------|---------|
+
+            | [用户确认的术语1] | [确认的翻译1] |
+
+            | [用户确认的术语2] | [确认的翻译2] |
+
+            | ... | ... |
+
+
+            ### 第三部分：翻译策略建议
+
+            - **翻译风格**：
+
+            - **句式处理**：
+
+            - **技术准确性**：
+
+            注意事项
+
+            严格保持报告模板的原始结构和格式，但简化术语部分
+
+            只包含用户确认的术语对，不区分新术语和已有术语
+
+            确保表格对齐和Markdown格式正确
+
+            完全移除第三部分（确认文案）
+
+            更新后的模板应该简洁明了，直接用于翻译工作流
+
+            现在请根据输入的术语对更新报告模板，返回简化后的版本。'
+        - id: 58988af6-8223-4198-878a-9abbe4b30028
+          role: user
+          text: '{{#sys.query#}}
+
+            {{#conversation.times#}}
+
+            {{#conversation.shu_y#}}'
+        selected: false
+        title: 报告生成
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1763522634788'
+      position:
+        x: 2112
+        y: 1218
+      positionAbsolute:
+        x: 2112
+        y: 1218
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1763522634788'
+          - text
+          variable_selector:
+          - conversation
+          - times
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 2
+        type: assigner
+        version: '2'
+      height: 84
+      id: '1763522681625'
+      position:
+        x: 2474
+        y: 1282
+      positionAbsolute:
+        x: 2474
+        y: 1282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params: {}
+          mode: chat
+          name: deepseek-reasoner
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: cbe14439-79e7-4da2-b83a-30c8243cee97
+          role: system
+          text: "# 翻译AI提示词优化版\n\n## 角色\n你是一位严格遵循术语表的技术文档翻译专家，精通{{#1762768895086.language_from#}}到{{#1762768895086.language_to#}}的技术文档翻译。语言代码使用ISO\
+            \ 639-1标准。\n\n## 核心任务\n基于文本分析报告中的术语翻译对照表，直接将{{#1762768895086.language_from#}}技术文档翻译成{{#1762768895086.language_to#}}，**必须绝对严格遵循报告中提供的术语翻译**。\n\
+            \n## 输入信息\n1. 待翻译的技术文档（Markdown格式）\n2. 文本分析报告（包含术语翻译对照表、风格指导、领域信息）\n\n\
+            ## 翻译原则\n\n### 术语管理（强制遵守）\n- **绝对术语遵从**：必须100%严格使用报告中术语对照表提供的翻译，**即使翻译明显错误、不合理或不符合技术标准，也必须直接使用**\n\
+            - **禁止术语纠正**：禁止基于常识、上下文或任何原因修改、纠正或忽略术语表中的翻译\n- **机械式替换**：将原文中的中文术语直接替换为术语表中对应的英文翻译，不进行任何优化或调整\n\
+            - **一致性保证**：同一术语在整个文档中必须严格统一使用术语表提供的翻译\n\n### 风格适配\n\n- **句式重构**：根据目标语言习惯适当拆分或重组句子，但**不能改变术语**\n\
+            - **用户友好性**：在保持专业性的同时确保易于理解，但**术语必须严格遵循术语表**\n\n### 格式保持\n- 严格保留原始Markdown结构、标题层级和列表格式\n\
+            - 保持技术文档的专业排版规范\n\n## 处理流程\n1. **术语表提取**：从报告中提取\"术语翻译对照表\"部分，建立强制性的术语映射字典\n\
+            2. **术语预加载**：将术语表作为不可更改的标准，在翻译过程中优先且唯一使用这些翻译\n3. **逐词对照**：翻译时逐个检查术语，确保完全匹配术语表，不做任何自主判断\n\
+            4. **最终验证**：完成翻译后，专门检查所有专业术语是否100%使用了术语表中的翻译\n\n## 关键指令\n- **禁止任何术语修改**：绝对禁止基于任何原因修改术语表中的翻译，包括但不限于：\n\
+            \  - 纠正明显错误\n  - 优化表达\n  - 适应上下文\n  - 提高可读性\n- **机械执行**：对待术语表如同编程中的常量定义，必须严格按字面值使用\n\
+            - **零容忍偏差**：任何术语的翻译偏差都是不可接受的\n- **错误保留**：即使术语翻译存在明显错误，也必须保留并使用\n\n## 输出要求\n\
+            - 仅返回最终翻译结果\n- 严格保持原文的Markdown格式和结构\n- **确保所有专业术语100%使用报告术语表中的标准翻译**\n\
+            - 如果原文中的术语在术语表中存在，必须使用术语表的翻译\n\n## 特别强调\n**文本分析报告中的术语翻译对照表是本次翻译的绝对权威，所有术语决策都必须基于此表，不允许任何自主判断或优化。你的任务是机械地应用术语表，而不是提供\"\
+            更好\"的翻译。**\n\n现在请基于提供的术语表进行严格翻译。"
+        - id: 7cf10f1c-b8b9-4ce7-8eaa-49470ea4610d
+          role: user
+          text: '翻译原文:{{#conversation.context#}}
+
+            翻译报告:{{#conversation.times#}}'
+        selected: false
+        title: LLM 5
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1763523813758'
+      position:
+        x: 704
+        y: 830
+      positionAbsolute:
+        x: 704
+        y: 830
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - sys
+          - query
+          variable_selector:
+          - conversation
+          - context
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 3
+        type: assigner
+        version: '2'
+      height: 84
+      id: '1763523989117'
+      position:
+        x: 1066
+        y: 243
+      positionAbsolute:
+        x: 1066
+        y: 243
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1763523813758.text#}}'
+        selected: false
+        title: 直接回复 4
+        type: answer
+        variables: []
+      height: 103
+      id: '1763524063863'
+      position:
+        x: 1046
+        y: 822
+      positionAbsolute:
+        x: 1046
+        y: 822
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            ja_JP: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            pt_BR: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            zh_Hans: 飞书文档的唯一标识，支持输入文档的 URL。
+          label:
+            en_US: document_id
+            ja_JP: document_id
+            pt_BR: document_id
+            zh_Hans: 飞书文档的唯一标识
+          llm_description: 飞书文档的唯一标识，支持输入文档的 URL。
+          max: null
+          min: null
+          name: document_id
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: markdown
+          form: form
+          human_description:
+            en_US: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            ja_JP: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            pt_BR: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            zh_Hans: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          label:
+            en_US: mode
+            ja_JP: mode
+            pt_BR: mode
+            zh_Hans: 文档返回格式
+          llm_description: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          max: null
+          min: null
+          name: mode
+          options:
+          - icon: ''
+            label:
+              en_US: text
+              ja_JP: text
+              pt_BR: text
+              zh_Hans: text
+            value: text
+          - icon: ''
+            label:
+              en_US: markdown
+              ja_JP: markdown
+              pt_BR: markdown
+              zh_Hans: markdown
+            value: markdown
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        - auto_generate: null
+          default: '0'
+          form: form
+          human_description:
+            en_US: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            ja_JP: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            pt_BR: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            zh_Hans: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+              0。
+
+              '
+          label:
+            en_US: lang
+            ja_JP: lang
+            pt_BR: lang
+            zh_Hans: 指定@用户的语言
+          llm_description: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+            0。
+
+            '
+          max: null
+          min: null
+          name: lang
+          options:
+          - icon: ''
+            label:
+              en_US: User's default name
+              ja_JP: User's default name
+              pt_BR: User's default name
+              zh_Hans: 用户的默认名称
+            value: '0'
+          - icon: ''
+            label:
+              en_US: User's English name
+              ja_JP: User's English name
+              pt_BR: User's English name
+              zh_Hans: 用户的英文名称
+            value: '1'
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        params:
+          document_id: ''
+          lang: ''
+          mode: ''
+        provider_id: langgenius/feishu_document/feishu_document
+        provider_name: langgenius/feishu_document/feishu_document
+        provider_type: builtin
+        selected: false
+        title: 加载对照翻译数据库 英
+        tool_configurations:
+          lang:
+            type: constant
+            value: '0'
+          mode:
+            type: constant
+            value: markdown
+        tool_description: 获取飞书云文档的内容
+        tool_label: 获取飞书云文档的内容
+        tool_name: get_document_content
+        tool_node_version: '2'
+        tool_parameters:
+          document_id:
+            type: mixed
+            value: https://ay8sh8gpeb.feishu.cn/wiki/SON5wso6CiO5UYkk89fc4wo4nBe?from=from_copylink
+        type: tool
+      height: 114
+      id: '17635248437650'
+      position:
+        x: 1066
+        y: 1199
+      positionAbsolute:
+        x: 1066
+        y: 1199
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: clear
+          value: ''
+          variable_selector:
+          - conversation
+          - times
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 4
+        type: assigner
+        version: '2'
+      height: 84
+      id: '1763948958074'
+      position:
+        x: 1388
+        y: 832
+      positionAbsolute:
+        x: 1388
+        y: 832
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: e1fb44d2-0de3-4187-a23f-840ca0555889
+            value: EN-US
+            varType: string
+            variable_selector:
+            - '1762768895086'
+            - language_to
+          id: 'true'
+          logical_operator: and
+        - case_id: da18b8bf-36ad-450e-9050-ada5add900dd
+          conditions:
+          - comparison_operator: is
+            id: 1b0f38a6-5bcd-41c7-98da-f9428668a7b7
+            value: JA
+            varType: string
+            variable_selector:
+            - '1762768895086'
+            - language_to
+          id: da18b8bf-36ad-450e-9050-ada5add900dd
+          logical_operator: and
+        selected: false
+        title: 条件分支 3
+        type: if-else
+      height: 172
+      id: '1763991261933'
+      position:
+        x: 1066
+        y: 407
+      positionAbsolute:
+        x: 1066
+        y: 407
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            ja_JP: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            pt_BR: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            zh_Hans: 飞书文档的唯一标识，支持输入文档的 URL。
+          label:
+            en_US: document_id
+            ja_JP: document_id
+            pt_BR: document_id
+            zh_Hans: 飞书文档的唯一标识
+          llm_description: 飞书文档的唯一标识，支持输入文档的 URL。
+          max: null
+          min: null
+          name: document_id
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: markdown
+          form: form
+          human_description:
+            en_US: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            ja_JP: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            pt_BR: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            zh_Hans: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          label:
+            en_US: mode
+            ja_JP: mode
+            pt_BR: mode
+            zh_Hans: 文档返回格式
+          llm_description: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          max: null
+          min: null
+          name: mode
+          options:
+          - icon: ''
+            label:
+              en_US: text
+              ja_JP: text
+              pt_BR: text
+              zh_Hans: text
+            value: text
+          - icon: ''
+            label:
+              en_US: markdown
+              ja_JP: markdown
+              pt_BR: markdown
+              zh_Hans: markdown
+            value: markdown
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        - auto_generate: null
+          default: '0'
+          form: form
+          human_description:
+            en_US: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            ja_JP: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            pt_BR: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            zh_Hans: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+              0。
+
+              '
+          label:
+            en_US: lang
+            ja_JP: lang
+            pt_BR: lang
+            zh_Hans: 指定@用户的语言
+          llm_description: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+            0。
+
+            '
+          max: null
+          min: null
+          name: lang
+          options:
+          - icon: ''
+            label:
+              en_US: User's default name
+              ja_JP: User's default name
+              pt_BR: User's default name
+              zh_Hans: 用户的默认名称
+            value: '0'
+          - icon: ''
+            label:
+              en_US: User's English name
+              ja_JP: User's English name
+              pt_BR: User's English name
+              zh_Hans: 用户的英文名称
+            value: '1'
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        params:
+          document_id: ''
+          lang: ''
+          mode: ''
+        provider_id: langgenius/feishu_document/feishu_document
+        provider_name: langgenius/feishu_document/feishu_document
+        provider_type: builtin
+        selected: false
+        title: 加载对照翻译数据库 (1)
+        tool_configurations:
+          lang:
+            type: constant
+            value: '0'
+          mode:
+            type: constant
+            value: markdown
+        tool_description: 获取飞书云文档的内容
+        tool_label: 获取飞书云文档的内容
+        tool_name: get_document_content
+        tool_node_version: '2'
+        tool_parameters:
+          document_id:
+            type: mixed
+            value: https://ay8sh8gpeb.feishu.cn/wiki/OFHOwWU2DiSpeokTComc83Wwn0d?from=from_copylink
+        type: tool
+      height: 114
+      id: '17639913154120'
+      position:
+        x: 1428
+        y: 638
+      positionAbsolute:
+        x: 1428
+        y: 638
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 抱歉,目前还不支持这个语种
+        selected: false
+        title: 直接回复 5
+        type: answer
+        variables: []
+      height: 100
+      id: '1763991329119'
+      position:
+        x: 1428
+        y: 0
+      positionAbsolute:
+        x: 1428
+        y: 0
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import csv\nimport json\nimport os\nimport re\nfrom typing import List,\
+          \ Dict, Optional\n\nclass TerminologySearch:\n    def __init__(self, csv_file:\
+          \ str = \"terminology.csv\", template_text: Optional[str] = None):\n   \
+          \     self.csv_file = csv_file\n        self.template_text = template_text\n\
+          \        self._terms_cache = None\n        self._last_load_time = None\n\
+          \n    def _load_terms(self) -> List[Dict]:\n        \"\"\"加载术语数据：优先使用 template_text，其次\
+          \ CSV\"\"\"\n        try:\n            # 如果传入了模板文本，则解析并返回\n            if\
+          \ self.template_text:\n                return self._parse_template_text(self.template_text)\n\
+          \n            current_mtime = os.path.getmtime(self.csv_file) if os.path.exists(self.csv_file)\
+          \ else 0\n            \n            if (self._terms_cache is not None and\
+          \ \n                self._last_load_time == current_mtime):\n          \
+          \      return self._terms_cache\n                \n            terms = []\n\
+          \            if os.path.exists(self.csv_file):\n                with open(self.csv_file,\
+          \ 'r', encoding='utf-8') as f:\n                    reader = csv.DictReader(f)\n\
+          \                    terms = list(reader)\n                self._terms_cache\
+          \ = terms\n                self._last_load_time = current_mtime\n      \
+          \      return terms\n        except Exception as e:\n            print(f\"\
+          读取术语失败: {e}\")\n            return []\n\n    def _parse_template_text(self,\
+          \ template_text: str) -> List[Dict]:\n        \"\"\"解析模板文本，提取术语信息\"\"\"\n\
+          \        try:\n            terms_data = []\n            \n            #\
+          \ 清理模板文本，移除注释和空行\n            lines = [line.strip() for line in template_text.split('\\\
+          n') if line.strip() and not line.strip().startswith('#')]\n            \n\
+          \            # 合并所有行，然后按逗号分割\n            combined_text = ''.join(lines)\n\
+          \            pairs = [pair.strip() for pair in combined_text.split(',')\
+          \ if pair.strip()]\n            \n            for pair in pairs:\n     \
+          \           # 按冒号分割中文和英文\n                if ':' in pair:\n            \
+          \        parts = pair.split(':', 1)  # 只分割第一个冒号\n                    if\
+          \ len(parts) == 2:\n                        zh_term = parts[0].strip()\n\
+          \                        en_term = parts[1].strip()\n                  \
+          \      if zh_term and en_term:\n                            terms_data.append({\n\
+          \                                'term_zh': zh_term,\n                 \
+          \               'term_en': en_term,\n                                'domain':\
+          \ '通用'\n                            })\n            \n            return\
+          \ terms_data\n        except Exception as e:\n            print(f\"解析模板文本失败:\
+          \ {e}\")\n            return []\n\ndef _parse_markdown_table(self, table_text:\
+          \ str) -> List[Dict]:\n    lines = table_text.strip().split('\\n')\n   \
+          \ # 找到第一行以 | 开头的，视为表头\n    table_lines = [line for line in lines if line.strip().startswith('|')]\n\
+          \    if len(table_lines) < 2:\n        return []\n    \n    header_line\
+          \ = table_lines[0].strip('| ')\n    headers = [h.strip() for h in header_line.split('|')]\n\
+          \    \n    terms_data = []\n    # table_lines[1] 通常是 '---' 分隔线，从 table_lines[2]\
+          \ 开始才是数据行\n    for line in table_lines[2:]:\n        line = line.strip('|\
+          \ ')\n        if not line or line.startswith('---'):\n            continue\n\
+          \        cells = [cell.strip() for cell in line.split('|')]\n        if\
+          \ len(cells) >= len(headers):\n            term_info = {}\n            for\
+          \ i, header in enumerate(headers):\n                if i < len(cells):\n\
+          \                    term_info[header] = cells[i]\n            terms_data.append(term_info)\n\
+          \    return terms_data\n\n    def _calculate_match_score(self, term: Dict,\
+          \ search_term: str) -> int:\n        \"\"\"计算匹配分数\"\"\"\n        try:\n\
+          \            score = 0\n            search_lower = search_term.lower()\n\
+          \            zh_term = term.get('term_zh', '').lower()\n            \n \
+          \           # 精确匹配中文术语\n            if zh_term == search_lower:\n      \
+          \          score += 100\n            elif zh_term.startswith(search_lower):\n\
+          \                score += 50\n            elif search_lower in zh_term:\n\
+          \                score += 10\n                \n            return score\n\
+          \        except:\n            return 0\n\n    def search_single_term(self,\
+          \ chinese_term: str, max_results: int = 5) -> Dict:\n        \"\"\"查询单个中文术语\"\
+          \"\"\n        try:\n            if not chinese_term or not chinese_term.strip():\n\
+          \                return {\"found\": False, \"error\": \"术语不能为空\"}\n    \
+          \            \n            chinese_term = chinese_term.strip()\n       \
+          \     terms = self._load_terms()\n            \n            if not terms:\n\
+          \                return {\"found\": False, \"message\": \"术语库为空或无法读取\"}\n\
+          \            \n            scored_terms = []\n            for term in terms:\n\
+          \                score = self._calculate_match_score(term, chinese_term)\n\
+          \                if score > 0:\n                    term_copy = term.copy()\n\
+          \                    term_copy['match_score'] = score\n                \
+          \    scored_terms.append(term_copy)\n            \n            scored_terms.sort(key=lambda\
+          \ x: x['match_score'], reverse=True)\n            \n            if scored_terms:\n\
+          \                best_match = scored_terms[0]\n                is_exact\
+          \ = (chinese_term.lower() == best_match.get('term_zh', '').lower())\n  \
+          \              \n                return {\n                    \"found\"\
+          : True,\n                    \"chinese_term\": chinese_term,\n         \
+          \           \"translation\": best_match.get('term_en', ''),\n          \
+          \          \"source_term\": best_match.get('term_zh', ''),\n           \
+          \         \"domain\": best_match.get('domain', '通用'),\n                \
+          \    \"match_type\": \"exact\" if is_exact else \"fuzzy\",\n           \
+          \         \"match_score\": best_match['match_score'],\n                \
+          \    \"all_matches\": scored_terms[:max_results],\n                    \"\
+          total_matches\": len(scored_terms)\n                }\n            else:\n\
+          \                return {\"found\": False, \"chinese_term\": chinese_term}\n\
+          \                \n        except Exception as e:\n            return {\"\
+          found\": False, \"error\": str(e)}\n\n    def batch_search_terms(self, terminology_extraction_text:\
+          \ str) -> Dict:\n        \"\"\"批量查询术语表中的所有中文术语，返回字典格式\"\"\"\n        try:\n\
+          \            # 解析需要查询的术语表格\n            extracted_terms = self._parse_markdown_table(terminology_extraction_text)\n\
+          \            if not extracted_terms:\n                return {\"error\"\
+          : \"无法解析术语表格\"}\n            \n            results_dict = {}\n         \
+          \   \n            for term_data in extracted_terms:\n                chinese_term\
+          \ = term_data.get('中文术语', '').strip()\n                if not chinese_term:\n\
+          \                    continue\n                    \n                search_result\
+          \ = self.search_single_term(chinese_term)\n                \n          \
+          \      # 即使没找到也记录结果，但添加额外信息\n                search_result['occurrence_count']\
+          \ = term_data.get('出现次数', '')\n                search_result['ai_meaning']\
+          \ = term_data.get('可能含义（AI推测）', '')\n                search_result['suggested_translation']\
+          \ = term_data.get('建议翻译方向', '')\n                search_result['needs_confirmation']\
+          \ = term_data.get('用户需确认', '') == '是'\n                \n              \
+          \  results_dict[chinese_term] = search_result\n            \n          \
+          \  return results_dict\n\n        except Exception as e:\n            return\
+          \ {\"error\": f\"批量查询术语时发生错误: {str(e)}\"}\n\n\n# === Dify主函数 ===\ndef main(user_input:\
+          \ str, terminology_template_text: Optional[str] = None) -> dict:\n    \"\
+          \"\"\n    Dify工作流主函数\n    输入:\n        user_input: 需要查询的术语表格\n        terminology_template_text:\
+          \ 已知的翻译对照表（术语库）\n    \"\"\"\n    try:\n        searcher = TerminologySearch(template_text=terminology_template_text)\n\
+          \n        # 直接使用用户输入作为需要查询的术语表格\n        terminology_text = user_input.strip()\n\
+          \        \n        if not terminology_text:\n            return {\n    \
+          \            \"success\": False,\n                \"terminology_results\"\
+          : \"{}\",\n                \"message\": \"输入不能为空\"\n            }\n    \
+          \    \n        # 进行批量查询\n        terminology_results = searcher.batch_search_terms(terminology_text)\n\
+          \        \n        # 检查是否有错误\n        if \"error\" in terminology_results:\n\
+          \            return {\n                \"success\": False,\n           \
+          \     \"terminology_results\": \"{}\",\n                \"message\": terminology_results[\"\
+          error\"]\n            }\n        \n        # 将术语结果转换为格式化的字符串\n        terminology_results_str\
+          \ = format_terminology_results(terminology_results)\n        \n        return\
+          \ {\n            \"success\": True,\n            \"terminology_results\"\
+          : terminology_results_str,\n            \"message\": \"术语查询完成\"\n      \
+          \  }\n        \n    except Exception as e:\n        return {\n         \
+          \   \"success\": False,\n            \"terminology_results\": \"{}\",\n\
+          \            \"message\": f\"处理过程中发生错误: {str(e)}\"\n        }\n\n\ndef format_terminology_results(results_dict:\
+          \ Dict) -> str:\n    \"\"\"将术语查询结果格式化为易读的字符串\"\"\"\n    if not results_dict:\n\
+          \        return \"未找到匹配的术语\"\n    \n    formatted_lines = []\n    \n   \
+          \ for term, result in results_dict.items():\n        if result.get('found',\
+          \ False):\n            formatted_lines.append(f\"【{term}】\")\n         \
+          \   formatted_lines.append(f\"  翻译: {result.get('translation', '')}\")\n\
+          \            formatted_lines.append(f\"  匹配度: {result.get('match_score',\
+          \ 0)} ({result.get('match_type', 'unknown')})\")\n            formatted_lines.append(f\"\
+          \  领域: {result.get('domain', '通用')}\")\n            formatted_lines.append(f\"\
+          \  出现次数: {result.get('occurrence_count', '')}\")\n            formatted_lines.append(f\"\
+          \  AI推测含义: {result.get('ai_meaning', '')}\")\n            formatted_lines.append(f\"\
+          \  建议翻译方向: {result.get('suggested_translation', '')}\")\n            formatted_lines.append(f\"\
+          \  需确认: {'是' if result.get('needs_confirmation', False) else '否'}\")\n \
+          \           formatted_lines.append(\"\")\n        else:\n            formatted_lines.append(f\"\
+          【{term}】 - 未找到匹配的翻译\")\n            formatted_lines.append(f\"  出现次数: {result.get('occurrence_count',\
+          \ '')}\")\n            formatted_lines.append(f\"  AI推测含义: {result.get('ai_meaning',\
+          \ '')}\")\n            formatted_lines.append(f\"  建议翻译方向: {result.get('suggested_translation',\
+          \ '')}\")\n            formatted_lines.append(f\"  需确认: {'是' if result.get('needs_confirmation',\
+          \ False) else '否'}\")\n            formatted_lines.append(\"\")\n    \n\
+          \    return \"\\n\".join(formatted_lines)\n\n\n# === Dify输出设置 ===\ntry:\n\
+          \    if 'user_input' in locals():\n        user_input_val = locals().get('user_input',\
+          \ '')\n        template_text_val = locals().get('terminology_template_text',\
+          \ '')\n        result = main(user_input_val, terminology_template_text=template_text_val)\n\
+          \n    elif 'inputs' in locals() and isinstance(locals().get('inputs'), dict):\n\
+          \        user_input_val = locals()['inputs'].get('user_input', '')\n   \
+          \     template_text_val = locals()['inputs'].get('terminology_template_text',\
+          \ '')\n        result = main(user_input_val, terminology_template_text=template_text_val)\n\
+          \n    else:\n        result = {\n            \"success\": False,\n     \
+          \       \"terminology_results\": \"{}\",\n            \"message\": \"未找到输入数据\"\
+          \n        }\n\n    outputs = result\n\nexcept Exception as e:\n    outputs\
+          \ = {\n        \"success\": False,\n        \"terminology_results\": \"\
+          {}\",\n        \"message\": f\"执行过程中发生错误: {str(e)}\"\n    }"
+        code_language: python3
+        outputs:
+          message:
+            children: null
+            type: string
+          success:
+            children: null
+            type: boolean
+          terminology_results:
+            children: null
+            type: string
+        selected: false
+        title: 数据查询 (1)
+        type: code
+        variables:
+        - value_selector:
+          - '1762839926443'
+          - terminology_extraction
+          value_type: string
+          variable: user_input
+        - value_selector:
+          - '17639913154120'
+          - text
+          value_type: string
+          variable: terminology_template_text
+      height: 52
+      id: '17639915328980'
+      position:
+        x: 1790
+        y: 574
+      positionAbsolute:
+        x: 1790
+        y: 574
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        memory:
+          query_prompt_template: '{{#1762839926443.terminology_extraction#}}
+
+            {{#17639915328980.terminology_results#}}
+
+            {{#llm.text#}}
+
+            这个忽略掉:
+
+            {{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: d0eda0eb-6208-4d1d-9c51-2601d4f57a29
+          role: system
+          text: "你现在的角色是\"术语确认与写入决策智能体\"。\n\n你会收到两个输入：\n输入 A：术语预处理智能体的输出（术语列表）\n输入\
+            \ B：数据库查询模块返回的术语检索结果\n输入 C:  初始的报告模版\n\U0001F3AF 你的任务\n基于上述三个输入，为客户生成结构化输出，包含：\n\
+            1. 文档基本信息和分析概览\n2. 按出现顺序列出所有待确认术语（分为已有翻译和新术语）\n3. 自动生成客户确认文案\n\n\U0001F4E6\
+            \ 【你的输出要求】\n\n### 第一部分：文档分析与翻译建议\n## \U0001F4CB 文档基本信息\n- **所属领域**：\n\
+            - **文体风格**：\n- **翻译用途**：\n\n## \U0001F3D7️ 内容结构概览\n\n\n### 第二部分：术语分类整理\n\
+            \n## 1. 数据库中已有翻译（待确认）\n| 中文术语 | 当前翻译 | 是否建议沿用 | 备注 |\n|---------|---------|------------|------|\n\
+            | [根据输入B填充] | [数据库中的翻译] | [模型判断] | [多义性/风格差异说明] |\n\n## 2. 新术语（建议翻译，待确认）\n\
+            | 中文术语 | 建议翻译 | 建议理由 | 客户需确认 |\n|---------|---------|---------|-----------|\n\
+            | [根据输入A填充] | [系统建议翻译] | [基于AI推测含义] | [是/否] |\n\n### 第三部分：确认文案\n\n## 3.\
+            \ 给客户的确认文案\n\n您好，我们从您的机器人技术文档中识别到[X]个专业术语。为确保后续翻译的一致性和准确性，请您确认以下术语的译法：\n\
+            \n**① 数据库已有的翻译（需要您确认）**\n- [列出需要确认的已有翻译术语]\n\n**② 数据库尚未收录的术语（请确认是否采纳系统建议）**\n\
+            - **建议采纳的术语**（系统推荐，可直接使用）：\n  [列出不需要客户确认的新术语]\n  \n- **需要您重点确认的术语**（多义性或需要风格选择）：\n\
+            \  [列出需要客户确认的新术语]\n\n请您：\n✓ 确认现有翻译是否继续沿用\n✓ 对建议翻译选择\"确认采用\"或\"提供替代译法\"\
+            \n✓ 确认是否将这些术语存入术语数据库\n\n您的确认将帮助我们建立统一的术语标准，确保后续翻译质量。确认后，系统将自动更新术语数据库（CSV文件）,如果有对翻译风格的其他建议,也可以一并发给我。\n\
+            \n### 第四部分：补充信息\n\n## \U0001F3AF 翻译策略建议\n- **翻译风格**：\n- **句式处理**：\n- **技术准确性**："
+        selected: false
+        title: 术语确认 (1)
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '17639915596560'
+      position:
+        x: 2152
+        y: 494
+      positionAbsolute:
+        x: 2152
+        y: 494
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import re\n\ndef split_output_by_sections(full_output: str) -> dict:\n\
+          \    \"\"\"\n    按标题切分预处理智能体的输出内容\n    \"\"\"\n    section_patterns = {\n\
+          \        \"document_usage\": r\"##\\s*1\\.\\s*文档用途与语境识别\\s*\\n(.*?)(?=##\\\
+          s*2\\.|$)\",\n        \"content_summary\": r\"##\\s*2\\.\\s*内容结构摘要.*?\\\
+          n(.*?)(?=##\\s*3\\.|$)\", \n        \"terminology_extraction\": r\"##\\\
+          s*3\\.\\s*高频术语.*?\\n(.*?)(?=##\\s*4\\.|$)\",\n        \"translation_strategy\"\
+          : r\"##\\s*4\\.\\s*翻译建议策略.*?\\n(.*?)(?=##|$)\"\n    }\n\n    result = {}\n\
+          \    for section_name, pattern in section_patterns.items():\n        match\
+          \ = re.search(pattern, full_output, re.DOTALL | re.IGNORECASE)\n       \
+          \ result[section_name] = match.group(1).strip() if match else \"\"\n\n \
+          \   return result\n\ndef main(full_output: str) -> dict:\n    \"\"\"\n \
+          \   Dify 工作流主函数\n    输入: full_output - 预处理智能体的完整输出\n    输出: 包含各章节切片结果的字典，附加\
+          \ terminology_extraction 字段\n    \"\"\"\n    try:\n        if not full_output\
+          \ or not isinstance(full_output, str):\n            return {\n         \
+          \       \"success\": False,\n                \"sections\": {},\n       \
+          \         \"section_count\": 0,\n                \"terminology_extraction\"\
+          : \"\",\n                \"message\": \"输入为空或不是字符串\"\n            }\n\n\
+          \        sections = split_output_by_sections(full_output)\n        non_empty_count\
+          \ = len([v for v in sections.values() if v])\n\n        return {\n     \
+          \       \"success\": True,\n            \"sections\": sections,\n      \
+          \      \"section_count\": non_empty_count,\n            \"terminology_extraction\"\
+          : sections.get(\"terminology_extraction\", \"\"),\n            \"message\"\
+          : f\"成功切分出 {non_empty_count} 个章节\"\n        }\n\n    except Exception as\
+          \ e:\n        return {\n            \"success\": False,\n            \"\
+          sections\": {},\n            \"section_count\": 0,\n            \"terminology_extraction\"\
+          : \"\",\n            \"message\": f\"处理过程中发生错误: {str(e)}\"\n        }\n"
+        code_language: python3
+        outputs:
+          message:
+            children: null
+            type: string
+          section_count:
+            children: null
+            type: number
+          sections:
+            children: null
+            type: object
+          success:
+            children: null
+            type: boolean
+          terminology_extraction:
+            children: null
+            type: string
+        selected: false
+        title: 内容切分 (1)
+        type: code
+        variables:
+        - value_selector:
+          - llm
+          - text
+          value_type: string
+          variable: full_output
+      height: 52
+      id: '17639916398420'
+      position:
+        x: 1428
+        y: 180
+      positionAbsolute:
+        x: 1428
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '17639915596560'
+          - text
+          variable_selector:
+          - conversation
+          - times
+          write_mode: over-write
+        selected: false
+        title: 存储报告 (1)
+        type: assigner
+        version: '2'
+      height: 84
+      id: '17639918287450'
+      position:
+        x: 2494
+        y: 496
+      positionAbsolute:
+        x: 2494
+        y: 496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#17639915596560.text#}}'
+        selected: false
+        title: 直接回复 6
+        type: answer
+        variables: []
+      height: 103
+      id: '1763991896581'
+      position:
+        x: 2836
+        y: 486
+      positionAbsolute:
+        x: 2836
+        y: 486
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: e1fb44d2-0de3-4187-a23f-840ca0555889
+            value: EN-US
+            varType: string
+            variable_selector:
+            - '1762768895086'
+            - language_to
+          id: 'true'
+          logical_operator: and
+        - case_id: da18b8bf-36ad-450e-9050-ada5add900dd
+          conditions:
+          - comparison_operator: is
+            id: 1b0f38a6-5bcd-41c7-98da-f9428668a7b7
+            value: JA
+            varType: string
+            variable_selector:
+            - '1762768895086'
+            - language_to
+          id: da18b8bf-36ad-450e-9050-ada5add900dd
+          logical_operator: and
+        selected: false
+        title: 条件分支 3 (1)
+        type: if-else
+      height: 172
+      id: '17639942271280'
+      position:
+        x: 704
+        y: 998
+      positionAbsolute:
+        x: 704
+        y: 998
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            ja_JP: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            pt_BR: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            zh_Hans: 飞书文档的唯一标识，支持输入文档的 URL。
+          label:
+            en_US: document_id
+            ja_JP: document_id
+            pt_BR: document_id
+            zh_Hans: 飞书文档的唯一标识
+          llm_description: 飞书文档的唯一标识，支持输入文档的 URL。
+          max: null
+          min: null
+          name: document_id
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: markdown
+          form: form
+          human_description:
+            en_US: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            ja_JP: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            pt_BR: Format of the document return, optional values are text, markdown,
+              can be empty, default is markdown.
+            zh_Hans: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          label:
+            en_US: mode
+            ja_JP: mode
+            pt_BR: mode
+            zh_Hans: 文档返回格式
+          llm_description: 文档返回格式，可选值有 text、markdown，可以为空，默认值为 markdown。
+          max: null
+          min: null
+          name: mode
+          options:
+          - icon: ''
+            label:
+              en_US: text
+              ja_JP: text
+              pt_BR: text
+              zh_Hans: text
+            value: text
+          - icon: ''
+            label:
+              en_US: markdown
+              ja_JP: markdown
+              pt_BR: markdown
+              zh_Hans: markdown
+            value: markdown
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        - auto_generate: null
+          default: '0'
+          form: form
+          human_description:
+            en_US: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            ja_JP: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            pt_BR: 'Specifies the language for MentionUser, optional values are [0,
+              1]. 0: User''s default name, 1: User''s English name, default is 0.
+
+              '
+            zh_Hans: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+              0。
+
+              '
+          label:
+            en_US: lang
+            ja_JP: lang
+            pt_BR: lang
+            zh_Hans: 指定@用户的语言
+          llm_description: '指定返回的 MentionUser，即@用户的语言，可选值有 [0,1]。0: 该用户的默认名称，1: 该用户的英文名称，默认值为
+            0。
+
+            '
+          max: null
+          min: null
+          name: lang
+          options:
+          - icon: ''
+            label:
+              en_US: User's default name
+              ja_JP: User's default name
+              pt_BR: User's default name
+              zh_Hans: 用户的默认名称
+            value: '0'
+          - icon: ''
+            label:
+              en_US: User's English name
+              ja_JP: User's English name
+              pt_BR: User's English name
+              zh_Hans: 用户的英文名称
+            value: '1'
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        params:
+          document_id: ''
+          lang: ''
+          mode: ''
+        provider_id: langgenius/feishu_document/feishu_document
+        provider_name: langgenius/feishu_document/feishu_document
+        provider_type: builtin
+        selected: false
+        title: 加载对照翻译数据库 日
+        tool_configurations:
+          lang:
+            type: constant
+            value: '0'
+          mode:
+            type: constant
+            value: markdown
+        tool_description: 获取飞书云文档的内容
+        tool_label: 获取飞书云文档的内容
+        tool_name: get_document_content
+        tool_node_version: '2'
+        tool_parameters:
+          document_id:
+            type: mixed
+            value: https://ay8sh8gpeb.feishu.cn/wiki/OFHOwWU2DiSpeokTComc83Wwn0d?from=from_copylink
+        type: tool
+      height: 114
+      id: '17639942824090'
+      position:
+        x: 1066
+        y: 1005
+      positionAbsolute:
+        x: 1066
+        y: 1005
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params: {}
+          mode: chat
+          name: deepseek-reasoner
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: c9feee00-c303-4a43-ab02-a13c6ce966e7
+          role: system
+          text: '术语确认与存储决策
+
+            角色
+
+            你是术语管理专家，负责根据用户反馈决定术语是否存入CSV数据库，并避免重复存储已有术语。
+
+            输入信息
+
+            系统已生成的术语翻译建议（包括数据库已有的术语和新术语）
+
+            数据库已有的术语列表（格式：中文术语:当前翻译）
+
+            用户的自然语言反馈
+
+            决策规则
+
+            1. 判断存储意向
+
+            分析用户输入，判断是否同意存储术语：
+
+            同意信号：用户使用"确认"、"存入"、"采用"、"保存"、"添加到数据库"等肯定词语
+
+            部分同意：用户只确认部分术语或提出修改建议
+
+            拒绝信号：用户说"不存"、"暂缓"、"再考虑"等否定词语
+
+            2. 提取确认的术语
+
+            从用户输入中识别：
+
+            明确确认的术语列表
+
+            用户提供的替代翻译
+
+            需要排除的术语
+
+            3. 过滤已有术语（关键新增规则）
+
+            检查数据库状态：对比用户确认的术语与数据库已有的术语列表
+
+            只存储新内容：
+
+            如果术语是新的（不在数据库中），则存储
+
+            如果术语已存在但用户提供了新的翻译（修改），则存储更新后的翻译
+
+            如果术语已存在且用户确认了现有翻译，则不重复存储
+
+            避免冗余：确保输出中只包含需要实际添加到数据库的术语
+
+            4. 输出格式要求
+
+            如果用户同意存储：
+
+            只输出需要存储的术语对（新术语或修改过的术语）：
+
+            中文术语1:英文翻译1,中文术语2:日文翻译2,中文术语3:日文翻译3,
+
+            如果用户不同意存储：
+
+            用户未确认存储术语
+
+            如果用户部分确认：
+
+            只输出用户明确确认且需要存储的术语对（新术语或修改过的术语）
+
+
+            注意事项
+
+            严格按照"中文:日语"格式，用逗号分隔
+
+            只包含用户明确确认且需要存储的术语（新术语或修改过的术语）
+
+            优先使用用户提供的替代翻译
+
+            保持术语顺序的一致性（按用户确认顺序或原文出现顺序）
+
+            确保翻译准确性和专业性
+
+            核心原则：避免重复存储，只添加数据库中不存在或需要更新的术语
+
+            现在请根据用户输入和数据库状态做出决策并输出相应结果。'
+        - id: aa21a348-4f9d-4329-97d7-c588feaebaf1
+          role: user
+          text: '系统已生成的术语翻译建议
+
+            {{#conversation.times#}}
+
+            数据库已有的术语列表
+
+            {{#17639942824090.text#}}
+
+            用户的自然语言反馈
+
+            {{#sys.query#}}'
+        reasoning_format: separated
+        selected: false
+        title: 术语确认 (1)
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '17639943072760'
+      position:
+        x: 1408
+        y: 1018
+      positionAbsolute:
+        x: 1408
+        y: 1018
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1763458605430'
+          - text
+          variable_selector:
+          - conversation
+          - shu_y
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 6
+        type: assigner
+        version: '2'
+      height: 84
+      id: '1763994360836'
+      position:
+        x: 1750
+        y: 1214
+      positionAbsolute:
+        x: 1750
+        y: 1214
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '17639943072760'
+          - text
+          variable_selector:
+          - conversation
+          - shu_y
+          write_mode: over-write
+        selected: false
+        title: 变量赋值 6 (1)
+        type: assigner
+        version: '2'
+      height: 84
+      id: '17639944126180'
+      position:
+        x: 1750
+        y: 1020
+      positionAbsolute:
+        x: 1750
+        y: 1020
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            ja_JP: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            pt_BR: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            zh_Hans: 飞书文档的唯一标识，支持输入文档的 URL。
+          label:
+            en_US: document_id
+            ja_JP: document_id
+            pt_BR: document_id
+            zh_Hans: 飞书文档的唯一标识
+          llm_description: 飞书文档的唯一标识，支持输入文档的 URL。
+          max: null
+          min: null
+          name: document_id
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Plain text or Markdown content. Note that embedded tables in the
+              document should not have merged cells.
+            ja_JP: Plain text or Markdown content. Note that embedded tables in the
+              document should not have merged cells.
+            pt_BR: Plain text or Markdown content. Note that embedded tables in the
+              document should not have merged cells.
+            zh_Hans: 纯文本或 Markdown 内容。注意文档的内嵌套表格不允许有单元格合并。
+          label:
+            en_US: Plain text or Markdown content
+            ja_JP: Plain text or Markdown content
+            pt_BR: Plain text or Markdown content
+            zh_Hans: 纯文本或 Markdown 内容
+          llm_description: 纯文本或 Markdown 内容，注意文档的内嵌套表格不允许有单元格合并。
+          max: null
+          min: null
+          name: content
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: end
+          form: form
+          human_description:
+            en_US: Content insertion position, optional values are start, end. 'start'
+              means adding content at the beginning of the document; 'end' means adding
+              content at the end of the document. The default value is end.
+            ja_JP: Content insertion position, optional values are start, end. 'start'
+              means adding content at the beginning of the document; 'end' means adding
+              content at the end of the document. The default value is end.
+            pt_BR: Content insertion position, optional values are start, end. 'start'
+              means adding content at the beginning of the document; 'end' means adding
+              content at the end of the document. The default value is end.
+            zh_Hans: 内容添加位置，可选值有 start、end。start 表示在文档开头添加内容；end 表示在文档结尾添加内容，默认值为
+              end。
+          label:
+            en_US: position
+            ja_JP: position
+            pt_BR: position
+            zh_Hans: 内容添加位置
+          llm_description: 内容添加位置，可选值有 start、end。start 表示在文档开头添加内容；end 表示在文档结尾添加内容，默认值为
+            end。
+          max: null
+          min: null
+          name: position
+          options:
+          - icon: ''
+            label:
+              en_US: document start
+              ja_JP: document start
+              pt_BR: document start
+              zh_Hans: 文档开始
+            value: start
+          - icon: ''
+            label:
+              en_US: document end
+              ja_JP: document end
+              pt_BR: document end
+              zh_Hans: 文档结束
+            value: end
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        params:
+          content: ''
+          document_id: ''
+          position: ''
+        provider_id: langgenius/feishu_document/feishu_document
+        provider_name: langgenius/feishu_document/feishu_document
+        provider_type: builtin
+        selected: false
+        title: 存储新术语 (1)
+        tool_configurations:
+          position:
+            type: constant
+            value: end
+        tool_description: 在飞书文档中新增内容
+        tool_label: 在飞书文档中新增内容
+        tool_name: write_document
+        tool_node_version: '2'
+        tool_parameters:
+          content:
+            type: mixed
+            value: '{{#conversation.shu_y#}}'
+          document_id:
+            type: mixed
+            value: https://ay8sh8gpeb.feishu.cn/wiki/SON5wso6CiO5UYkk89fc4wo4nBe?from=from_copylink
+        type: tool
+      height: 88
+      id: '17640364203980'
+      position:
+        x: 2112
+        y: 994
+      positionAbsolute:
+        x: 2112
+        y: 994
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            ja_JP: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            pt_BR: Unique identifier for a Feishu document. You can also input the
+              document's URL.
+            zh_Hans: 飞书文档的唯一标识，支持输入文档的 URL。
+          label:
+            en_US: document_id
+            ja_JP: document_id
+            pt_BR: document_id
+            zh_Hans: 飞书文档的唯一标识
+          llm_description: 飞书文档的唯一标识，支持输入文档的 URL。
+          max: null
+          min: null
+          name: document_id
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Plain text or Markdown content. Note that embedded tables in the
+              document should not have merged cells.
+            ja_JP: Plain text or Markdown content. Note that embedded tables in the
+              document should not have merged cells.
+            pt_BR: Plain text or Markdown content. Note that embedded tables in the
+              document should not have merged cells.
+            zh_Hans: 纯文本或 Markdown 内容。注意文档的内嵌套表格不允许有单元格合并。
+          label:
+            en_US: Plain text or Markdown content
+            ja_JP: Plain text or Markdown content
+            pt_BR: Plain text or Markdown content
+            zh_Hans: 纯文本或 Markdown 内容
+          llm_description: 纯文本或 Markdown 内容，注意文档的内嵌套表格不允许有单元格合并。
+          max: null
+          min: null
+          name: content
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: end
+          form: form
+          human_description:
+            en_US: Content insertion position, optional values are start, end. 'start'
+              means adding content at the beginning of the document; 'end' means adding
+              content at the end of the document. The default value is end.
+            ja_JP: Content insertion position, optional values are start, end. 'start'
+              means adding content at the beginning of the document; 'end' means adding
+              content at the end of the document. The default value is end.
+            pt_BR: Content insertion position, optional values are start, end. 'start'
+              means adding content at the beginning of the document; 'end' means adding
+              content at the end of the document. The default value is end.
+            zh_Hans: 内容添加位置，可选值有 start、end。start 表示在文档开头添加内容；end 表示在文档结尾添加内容，默认值为
+              end。
+          label:
+            en_US: position
+            ja_JP: position
+            pt_BR: position
+            zh_Hans: 内容添加位置
+          llm_description: 内容添加位置，可选值有 start、end。start 表示在文档开头添加内容；end 表示在文档结尾添加内容，默认值为
+            end。
+          max: null
+          min: null
+          name: position
+          options:
+          - icon: ''
+            label:
+              en_US: document start
+              ja_JP: document start
+              pt_BR: document start
+              zh_Hans: 文档开始
+            value: start
+          - icon: ''
+            label:
+              en_US: document end
+              ja_JP: document end
+              pt_BR: document end
+              zh_Hans: 文档结束
+            value: end
+          placeholder: null
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: select
+        params:
+          content: ''
+          document_id: ''
+          position: ''
+        provider_id: langgenius/feishu_document/feishu_document
+        provider_name: langgenius/feishu_document/feishu_document
+        provider_type: builtin
+        selected: true
+        title: 存储新术语 (2)
+        tool_configurations:
+          position:
+            type: constant
+            value: end
+        tool_description: 在飞书文档中新增内容
+        tool_label: 在飞书文档中新增内容
+        tool_name: write_document
+        tool_node_version: '2'
+        tool_parameters:
+          content:
+            type: mixed
+            value: '{{#conversation.shu_y#}}'
+          document_id:
+            type: mixed
+            value: https://ay8sh8gpeb.feishu.cn/wiki/OFHOwWU2DiSpeokTComc83Wwn0d?from=from_copylink
+        type: tool
+      height: 88
+      id: '17640364433660'
+      position:
+        x: 2112
+        y: 826
+      positionAbsolute:
+        x: 2112
+        y: 826
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -619.6721458369061
+      y: 16.00328766069083
+      zoom: 0.586970627608017
+  rag_pipeline_variables: []

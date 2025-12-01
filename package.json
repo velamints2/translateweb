@@ -1,0 +1,42 @@
+{
+  "name": "translate-workflow-app",
+  "version": "1.0.0",
+  "description": "基于Dify的翻译工作流应用",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/index.js",
+    "test": "node tests/comprehensive-test.js",
+    "test:stress": "node tests/stress-test.js",
+    "test:quick": "node test-local-agent.js",
+    "test:all": "npm run test:quick && npm run test"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "axios": "^1.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "element-plus": "^2.3.12",
+    "express": "^4.18.2",
+    "jimp": "^1.6.0",
+    "mammoth": "^1.11.0",
+    "multer": "^2.0.2",
+    "node-tesseract-ocr": "^2.2.1",
+    "openai": "^4.52.0",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^2.4.5",
+    "pdf2json": "^4.0.0",
+    "tencentcloud-sdk-nodejs": "^4.1.150",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.4",
+    "terser": "^5.44.1",
+    "vite": "^4.4.5"
+  }
+}

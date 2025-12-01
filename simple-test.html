@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单测试页面</title>
+</head>
+<body>
+    <div id="app">
+        <h1>基础HTML测试</h1>
+        <p id="message">等待JavaScript执行...</p>
+        <button id="testBtn">测试按钮</button>
+    </div>
+
+    <script>
+        console.log('=== 开始执行JavaScript ===');
+        
+        try {
+            // 基础DOM操作测试
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = 'JavaScript执行成功！';
+            messageEl.style.color = 'green';
+            messageEl.style.fontWeight = 'bold';
+            
+            // 按钮测试
+            const testBtn = document.getElementById('testBtn');
+            testBtn.addEventListener('click', function() {
+                alert('按钮点击成功！');
+                messageEl.textContent = '按钮事件正常！';
+            });
+            
+            // Vue CDN测试
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/vue@3/dist/vue.global.js';
+            script.onload = function() {
+                console.log('Vue CDN加载成功');
+                messageEl.textContent = 'Vue CDN已加载，尝试创建Vue应用...';
+                
+                if (typeof Vue !== 'undefined') {
+                    const { createApp } = Vue;
+                    const vueApp = createApp({
+                        template: '<div><h2>Vue应用测试成功！</h2><p>{{ message }}</p></div>',
+                        data() {
+                            return {
+                                message: '这是一个Vue应用'
+                            }
+                        }
+                    });
+                    vueApp.mount('#app');
+                    messageEl.textContent = 'Vue应用创建并挂载成功！';
+                } else {
+                    messageEl.textContent = 'Vue对象未找到';
+                }
+            };
+            script.onerror = function() {
+                console.error('Vue CDN加载失败');
+                messageEl.textContent = 'Vue CDN加载失败';
+            };
+            document.head.appendChild(script);
+            
+            console.log('=== JavaScript执行完成 ===');
+            
+        } catch (error) {
+            console.error('JavaScript执行错误:', error);
+            document.getElementById('message').textContent = 'JavaScript执行出错: ' + error.message;
+        }
+    </script>
+</body>
+</html>
