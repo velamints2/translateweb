@@ -47,9 +47,9 @@ async function execute(text, languageFrom, languageTo, confirmedTerms = [], docu
     logger.info('📡 调用 OpenAI API (gpt-5.1)...')
     const startTime = Date.now()
     
-    // 使用 Promise.race 实现超时
+    // 使用 Promise.race 实现超时（长文本翻译优化：10分钟）
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('OpenAI API 超时（超过 60 秒）')), 60000)
+      setTimeout(() => reject(new Error('OpenAI API 超时（超过 600 秒）')), 600000)
     )
     
     const response = await Promise.race([

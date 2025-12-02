@@ -37,7 +37,7 @@ export async function textinOcrRecognize(imagePath) {
           'x-ti-app-id': TEXTIN_APP_ID,
           'x-ti-secret-code': TEXTIN_SECRET_CODE
         },
-        timeout: 30000,
+        timeout: 120000,  // 延长到 2 分钟
         maxBodyLength: Infinity,
         maxContentLength: Infinity
       }

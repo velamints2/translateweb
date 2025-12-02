@@ -350,7 +350,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Refresh, UploadFilled, Document, ChatDotRound, Switch, Download, DocumentCopy, Back, Right } from '@element-plus/icons-vue'
 import { 
@@ -728,6 +728,68 @@ const downloadTranslation = async (format) => {
     ElMessage.success('Word 文件下载成功')
   }
 }
+
+// ================================
+// 会话状态持久化逻辑
+// ================================
+
+// 保存会话状态到 sessionStorage
+const saveSessionState = () => {
+  const sessionState = {
+    inputText: inputText.value,
+    languageFrom: languageFrom.value,
+    languageTo: languageTo.value,
+    analysisResult: analysisResult.value,
+    confirmationResult: confirmationResult.value,
+    translationResult: translationResult.value,
+    uploadedFile: uploadedFile.value,
+    editableExistingTerms: editableExistingTerms.value,
+    editableNewTerms: editableNewTerms.value,
+    timestamp: Date.now()
+  }
+  sessionStorage.setItem('translationSessionState', JSON.stringify(sessionState))
+}
+
+// 从 sessionStorage 恢复会话状态
+const restoreSessionState = () => {
+  const savedState = sessionStorage.getItem('translationSessionState')
+  if (savedState) {
+    try {
+      const state = JSON.parse(savedState)
+      // 只在状态不超过 30 分钟时恢复
+      if (Date.now() - state.timestamp < 30 * 60 * 1000) {
+        inputText.value = state.inputText || ''
+        languageFrom.value = state.languageFrom || 'ZH'
+        languageTo.value = state.languageTo || 'EN-US'
+        analysisResult.value = state.analysisResult || null
+        confirmationResult.value = state.confirmationResult || null
+        translationResult.value = state.translationResult || null
+        uploadedFile.value = state.uploadedFile || null
+        editableExistingTerms.value = state.editableExistingTerms || []
+        editableNewTerms.value = state.editableNewTerms || []
+        console.log('✅ 会话状态已恢复')
+      } else {
+        // 状态过期，清除
+        sessionStorage.removeItem('translationSessionState')
+      }
+    } catch (error) {
+      console.error('❌ 恢复会话状态失败:', error)
+    }
+  }
+}
+
+// 监听页面卸载事件，保存状态
+onMounted(() => {
+  // 恢复上一次的会话状态
+  restoreSessionState()
+  
+  // 页面卸载时保存状态
+  window.addEventListener('beforeunload', saveSessionState)
+  
+  return () => {
+    window.removeEventListener('beforeunload', saveSessionState)
+  }
+})
 </script>
 
 <style scoped>

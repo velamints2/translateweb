@@ -156,7 +156,7 @@ export async function evaluateTranslation(originalText, translatedText, sourceLa
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
         },
-        timeout: 60000
+        timeout: 300000  // 延长到 5 分钟
       }
     )
     
