@@ -173,7 +173,14 @@
             
             <!-- 已有术语 -->
             <div class="existing-terms">
-              <h5>1. 数据库中已有翻译（待确认）</h5>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h5 style="margin: 0;">1. 数据库中已有翻译（待确认）</h5>
+                <div>
+                  <el-button type="primary" link size="small" @click="selectAllExisting">全选</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="primary" link size="small" @click="deselectAllExisting">反选</el-button>
+                </div>
+              </div>
               <el-table :data="existingTerms" border style="width: 100%; margin-bottom: 20px;">
                 <el-table-column prop="original" label="中文术语" width="150"></el-table-column>
                 <el-table-column label="翻译" width="200">
@@ -197,7 +204,14 @@
 
             <!-- 新术语 -->
             <div class="new-terms">
-              <h5>2. 新术语（建议翻译，待确认）</h5>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h5 style="margin: 0;">2. 新术语（建议翻译，待确认）</h5>
+                <div>
+                  <el-button type="primary" link size="small" @click="selectAllNew">全选</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="primary" link size="small" @click="deselectAllNew">反选</el-button>
+                </div>
+              </div>
               <el-table :data="newTerms" border style="width: 100%; margin-bottom: 20px;">
                 <el-table-column prop="original" label="中文术语" width="150"></el-table-column>
                 <el-table-column label="翻译" width="200">
@@ -496,6 +510,34 @@ const confirmTerms = async (type) => {
   } finally {
     loading.confirm = false
   }
+}
+
+// 已有术语全选
+const selectAllExisting = () => {
+  editableExistingTerms.value.forEach(term => {
+    term.confirmed = true
+  })
+}
+
+// 已有术语反选
+const deselectAllExisting = () => {
+  editableExistingTerms.value.forEach(term => {
+    term.confirmed = !term.confirmed
+  })
+}
+
+// 新术语全选
+const selectAllNew = () => {
+  editableNewTerms.value.forEach(term => {
+    term.confirmed = true
+  })
+}
+
+// 新术语反选
+const deselectAllNew = () => {
+  editableNewTerms.value.forEach(term => {
+    term.confirmed = !term.confirmed
+  })
 }
 
 const startTranslation = async () => {
