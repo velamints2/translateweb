@@ -129,7 +129,21 @@ ${dbTermsList}
     } catch (parseError) {
       logger.error('❌ JSON 解析失败:', parseError.message)
       logger.error('原始响应:', responseText)
-      throw new Error('DeepSeek 返回格式异常，无法解析')
+      
+      // 降级处理：如果解析失败，返回基础结构，不阻断流程
+      logger.warn('⚠️ DeepSeek 响应解析失败，启用降级处理，返回空术语列表')
+      return {
+        documentInfo: { domain: '未知', style: '未知', purpose: '未知' },
+        contentStructure: `文档包含约 ${text.length} 个字符`,
+        confirmationText: '自动分析失败，请直接开始翻译',
+        translationStrategy: '通用翻译',
+        existingTerms: [],
+        newTerms: [],
+        properNouns: [],
+        analysisMode: 'deepseek_fallback',
+        analysisModel: 'deepseek-chat',
+        analysisTimestamp: new Date().toISOString()
+      }
     }
     
     // 标准化返回格式

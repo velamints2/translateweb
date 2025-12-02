@@ -8,6 +8,18 @@ import logger from '../../utils/logger.js'
 let openai = null
 
 function getOpenAIClient() {
+  // 优先使用 DeepSeek，因为服务器在国内无法连接 OpenAI
+  if (process.env.DEEPSEEK_API_KEY) {
+    if (!openai) {
+      logger.info('🔌 切换到 DeepSeek API (解决国内连接问题)')
+      openai = new OpenAI({
+        apiKey: process.env.DEEPSEEK_API_KEY,
+        baseURL: 'https://api.deepseek.com'
+      })
+    }
+    return openai
+  }
+
   if (!openai && process.env.OPENAI_API_KEY) {
     openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
@@ -23,9 +35,9 @@ async function execute(text, languageFrom, languageTo, confirmedTerms = [], docu
   logger.info('🌐 开始翻译...')
   
   // 检查是否配置了API密钥
-  if (!process.env.OPENAI_API_KEY) {
-    logger.error('❌ OpenAI API密钥未配置')
-    throw new Error('OpenAI API密钥未配置，无法执行翻译')
+  if (!process.env.OPENAI_API_KEY && !process.env.DEEPSEEK_API_KEY) {
+    logger.error('❌ API密钥未配置')
+    throw new Error('API密钥未配置，无法执行翻译')
   }
   
   try {
@@ -40,23 +52,26 @@ async function execute(text, languageFrom, languageTo, confirmedTerms = [], docu
     
     const client = getOpenAIClient()
     if (!client) {
-      logger.error('❌ OpenAI 客户端初始化失败')
-      throw new Error('OpenAI API密钥未配置，无法执行翻译')
+      logger.error('❌ 客户端初始化失败')
+      throw new Error('API密钥未配置，无法执行翻译')
     }
     
-    logger.info('📡 调用 OpenAI API (gpt-5.1)...')
+    const isDeepSeek = !!process.env.DEEPSEEK_API_KEY
+    const modelName = isDeepSeek ? 'deepseek-chat' : 'gpt-5.1'
+    
+    logger.info(`📡 调用 API (${modelName})...`)
     const startTime = Date.now()
     
     // 使用 Promise.race 实现超时（长文本翻译优化：10分钟）
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('OpenAI API 超时（超过 600 秒）')), 600000)
+      setTimeout(() => reject(new Error('API 请求超时（超过 600 秒）')), 600000)
     )
     
     const response = await Promise.race([
       client.chat.completions.create({
-        model: 'gpt-5.1',
-        max_completion_tokens: 16000,
-        temperature: 0.2,
+        model: modelName,
+        max_tokens: 4000, // DeepSeek 使用 max_tokens
+        temperature: 0.2, // DeepSeek 建议温度 1.3? 不，翻译建议低温度
         messages: [{
           role: 'user',
           content: prompt
@@ -66,7 +81,7 @@ async function execute(text, languageFrom, languageTo, confirmedTerms = [], docu
     ])
     
     const elapsed = Date.now() - startTime
-    logger.info(`✅ OpenAI API 响应成功（${elapsed}ms）`)
+    logger.info(`✅ API 响应成功（${elapsed}ms）`)
 
     const translatedText = response.choices[0].message.content
     logger.info('✅ 翻译完成')
@@ -82,8 +97,8 @@ async function execute(text, languageFrom, languageTo, confirmedTerms = [], docu
   } catch (error) {
     logger.error('❌ 翻译失败:', error.message)
     
-    // 如果是模型不存在错误，尝试降级到 gpt-4o
-    if (error.message && error.message.includes('gpt-5.1')) {
+    // 如果是模型不存在错误，尝试降级到 gpt-4o (仅限 OpenAI 模式)
+    if (!process.env.DEEPSEEK_API_KEY && error.message && error.message.includes('gpt-5.1')) {
       logger.warn('⚠️  gpt-5.1 不可用，尝试降级到 gpt-4o...')
       return await executeWithFallback(text, languageFrom, languageTo, confirmedTerms, documentInfo, translationStrategy)
     }
@@ -223,13 +238,16 @@ async function batchTranslate(text, languageFrom, languageTo, confirmedTerms, do
     
     const client = getOpenAIClient()
     if (!client) {
-      logger.error('❌ OpenAI 客户端初始化失败')
-      throw new Error('OpenAI API密钥未配置')
+      logger.error('❌ 客户端初始化失败')
+      throw new Error('API密钥未配置')
     }
     
+    const isDeepSeek = !!process.env.DEEPSEEK_API_KEY
+    const modelName = isDeepSeek ? 'deepseek-chat' : 'gpt-4o'
+
     const response = await client.chat.completions.create({
-      model: 'gpt-4o',
-      max_completion_tokens: 16000,
+      model: modelName,
+      max_tokens: 4000,
       temperature: 0.2,
       messages: [{
         role: 'user',

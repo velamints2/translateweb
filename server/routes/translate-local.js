@@ -157,18 +157,8 @@ router.post('/confirm-nouns', async (req, res) => {
       }))
     } else if (Array.isArray(confirmedNouns)) {
       // 用户选择性确认（允许空数组）
-      if (confirmedNouns.length === 0) {
-        // 如果发送的是空数组，使用所有术语作为默认值
-        session.confirmedNouns = session.analysisResult.properNouns.map(noun => ({
-          original: noun.original,
-          translation: noun.translation,
-          confirmed: true,
-          fromDatabase: noun.fromDatabase || false
-        }))
-      } else {
-        // 使用用户选择的术语
-        session.confirmedNouns = confirmedNouns
-      }
+      // 修复BUG: 如果是空数组，表示用户确实不想确认任何术语，而不是默认全选
+      session.confirmedNouns = confirmedNouns
     } else {
       // 如果既没有userResponse也没有confirmedNouns，使用所有术语作为默认值
       session.confirmedNouns = session.analysisResult.properNouns.map(noun => ({

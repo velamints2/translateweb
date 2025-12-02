@@ -442,9 +442,15 @@ async function addTermsToFeishuWiki(nodeToken, accessToken, terms) {
 async function add(terms) {
   logger.info(`📝 添加 ${terms.length} 个术语...`)
   
-  // 更新本地缓存
+  // 更新本地缓存 (默认更新中-英缓存)
+  const langKey = 'zh_to_en'
+  if (!terminologyCacheByLang.has(langKey)) {
+    terminologyCacheByLang.set(langKey, new Map())
+  }
+  const cache = terminologyCacheByLang.get(langKey)
+
   terms.forEach(term => {
-    terminologyCache.set(term.original, term.translation)
+    cache.set(term.original, term.translation)
   })
   
   // 尝试写入飞书知识库
