@@ -16,10 +16,24 @@ const FEISHU_WIKI_NODES = {
   zh_to_ja: 'OFHOwWU2DiSpeokTComc83Wwn0d'  // 中-日知识库页面
 }
 
-// 内存缓存
-let terminologyCache = new Map()
-let cacheExpiry = null
+// 内存缓存 - 按语言对分开
+let terminologyCacheByLang = new Map() // key: 'zh_to_en' / 'zh_to_ja', value: Map<original, translation>
+let cacheExpiryByLang = new Map()
 const CACHE_DURATION = 30 * 60 * 1000 // 30分钟
+
+/**
+ * 根据目标语言获取对应的知识库节点
+ */
+function getWikiNodeForLanguage(targetLanguage) {
+  // 根据目标语言选择对应的术语库
+  const lang = (targetLanguage || 'EN-US').toUpperCase()
+  
+  if (lang.startsWith('JA') || lang === 'JP') {
+    return { key: 'zh_to_ja', node: FEISHU_WIKI_NODES.zh_to_ja }
+  }
+  // 默认使用中-英术语库（包括 EN-US, EN-GB, ZH-TW, DE, ES, FR, KO, VI 等）
+  return { key: 'zh_to_en', node: FEISHU_WIKI_NODES.zh_to_en }
+}
 
 /**
  * 获取飞书访问令牌
@@ -59,7 +73,7 @@ async function getFeishuAccessToken() {
 /**
  * 模拟术语库数据
  */
-function getMockTerminology() {
+function getMockTerminology(langKey = 'zh_to_en') {
   const mockTerms = [
     { original: '激光雷达', translation: 'LiDAR' },
     { original: '建图', translation: 'Mapping' },
@@ -83,11 +97,15 @@ function getMockTerminology() {
   ]
 
   // 更新缓存
-  terminologyCache.clear()
+  if (!terminologyCacheByLang.has(langKey)) {
+    terminologyCacheByLang.set(langKey, new Map())
+  }
+  const cache = terminologyCacheByLang.get(langKey)
+  cache.clear()
   mockTerms.forEach(term => {
-    terminologyCache.set(term.original, term.translation)
+    cache.set(term.original, term.translation)
   })
-  cacheExpiry = Date.now() + CACHE_DURATION
+  cacheExpiryByLang.set(langKey, Date.now() + CACHE_DURATION)
 
   return mockTerms
 }
@@ -247,13 +265,21 @@ async function extractTermsFromFeishuWiki(nodeToken, accessToken) {
 }
 
 /**
- * 加载飞书知识库
+ * 加载飞书知识库 - 根据目标语言加载对应的术语库
+ * @param {string} targetLanguage - 目标语言代码（如 'EN-US', 'JA' 等）
  */
-async function load() {
+async function load(targetLanguage = 'EN-US') {
+  const { key: langKey, node: nodeToken } = getWikiNodeForLanguage(targetLanguage)
+  
+  logger.info(`📚 加载术语库，目标语言: ${targetLanguage}, 使用: ${langKey}`)
+  
   // 检查缓存
-  if (cacheExpiry && Date.now() < cacheExpiry && terminologyCache.size > 0) {
-    logger.info('✅ 使用缓存的术语库数据')
-    return Array.from(terminologyCache.entries()).map(([original, translation]) => ({
+  const cacheExpiry = cacheExpiryByLang.get(langKey)
+  const cache = terminologyCacheByLang.get(langKey)
+  
+  if (cacheExpiry && Date.now() < cacheExpiry && cache && cache.size > 0) {
+    logger.info(`✅ 使用缓存的术语库数据 (${langKey})`)
+    return Array.from(cache.entries()).map(([original, translation]) => ({
       original,
       translation
     }))
@@ -264,52 +290,52 @@ async function load() {
   
   if (!accessToken) {
     logger.warn('⚠️  飞书配置未设置，使用模拟数据')
-    return getMockTerminology()
+    return getMockTerminology(langKey)
   }
 
   try {
-    logger.info('🔍 从飞书知识库加载术语库...')
-    const allTerms = []
+    logger.info(`🔍 从飞书知识库加载术语库 (${langKey})...`)
+    
+    // 只加载对应语言的知识库
+    const terms = await extractTermsFromFeishuWiki(nodeToken, accessToken)
 
-    // 加载中-英知识库页面
-    const enTerms = await extractTermsFromFeishuWiki(FEISHU_WIKI_NODES.zh_to_en, accessToken)
-    allTerms.push(...enTerms)
-
-    // 加载中-日知识库页面
-    const jaTerms = await extractTermsFromFeishuWiki(FEISHU_WIKI_NODES.zh_to_ja, accessToken)
-    allTerms.push(...jaTerms)
-
-    // 去重
-    const uniqueTerms = Array.from(
-      new Map(allTerms.map(t => [t.original, t])).values()
-    )
-
-    logger.info(`✅ 成功加载 ${uniqueTerms.length} 个术语`)
+    logger.info(`✅ 成功加载 ${terms.length} 个术语 (${langKey})`)
 
     // 更新缓存
-    terminologyCache.clear()
-    uniqueTerms.forEach(term => {
-      terminologyCache.set(term.original, term.translation)
+    if (!terminologyCacheByLang.has(langKey)) {
+      terminologyCacheByLang.set(langKey, new Map())
+    }
+    const newCache = terminologyCacheByLang.get(langKey)
+    newCache.clear()
+    terms.forEach(term => {
+      newCache.set(term.original, term.translation)
     })
-    cacheExpiry = Date.now() + CACHE_DURATION
+    cacheExpiryByLang.set(langKey, Date.now() + CACHE_DURATION)
 
-    return uniqueTerms
+    return terms
   } catch (error) {
     logger.error('❌ 从飞书加载术语库失败:', error.message)
     logger.warn('⚠️  使用模拟数据作为后备')
-    return getMockTerminology()
+    return getMockTerminology(langKey)
   }
 }
 
 /**
  * 查询术语
+ * @param {string} term - 要查询的术语
+ * @param {string} targetLanguage - 目标语言代码
  */
-async function query(term) {
-  if (terminologyCache.size === 0 || !cacheExpiry || Date.now() >= cacheExpiry) {
-    await load()
+async function query(term, targetLanguage = 'EN-US') {
+  const { key: langKey } = getWikiNodeForLanguage(targetLanguage)
+  const cache = terminologyCacheByLang.get(langKey)
+  const cacheExpiry = cacheExpiryByLang.get(langKey)
+  
+  if (!cache || cache.size === 0 || !cacheExpiry || Date.now() >= cacheExpiry) {
+    await load(targetLanguage)
   }
   
-  const translation = terminologyCache.get(term)
+  const updatedCache = terminologyCacheByLang.get(langKey)
+  const translation = updatedCache?.get(term)
   return translation ? { original: term, translation } : null
 }
 

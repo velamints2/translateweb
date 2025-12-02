@@ -1,5 +1,5 @@
 /**
- * 预处理翻译文本工具
+ * 预处理翻译文本工具 - 仅使用 DeepSeek API
  */
 
 import OpenAI from 'openai'
@@ -13,75 +13,151 @@ function getDeepseekClient() {
       apiKey: process.env.DEEPSEEK_API_KEY,
       baseURL: 'https://api.deepseek.com/v1'
     })
+    logger.info('✅ DeepSeek 客户端初始化成功')
   }
   return deepseek
 }
 
 /**
- * 分析文本
+ * 分析文本 - 使用 DeepSeek API
  */
 async function analyze(text, languageFrom, languageTo, terminologyDatabase = []) {
   logger.info('📋 开始分析文本...')
   
-  // 尝试使用 DeepSeek 生成详细报告
-  try {
-    if (process.env.DEEPSEEK_API_KEY) {
-      logger.info('📡 调用 DeepSeek API 生成翻译预处理报告...')
-      return await analyzeWithDeepSeek(text, languageFrom, languageTo, terminologyDatabase)
-    }
-  } catch (error) {
-    logger.warn('⚠️  DeepSeek API 调用失败，降级到本地分析:', error.message)
+  // 检查 DeepSeek 配置
+  if (!process.env.DEEPSEEK_API_KEY) {
+    logger.error('❌ DeepSeek API 未配置')
+    throw new Error('DeepSeek API 未配置，请在 .env 文件中设置 DEEPSEEK_API_KEY')
   }
   
-  // 降级方案：使用本地简化分析
-  logger.info('📊 使用本地分析模式（无需调用外部 API）')
-  return generateSimpleAnalysis(text, terminologyDatabase, languageFrom, languageTo)
-}
+  const client = getDeepseekClient()
+  if (!client) {
+    throw new Error('DeepSeek 客户端初始化失败')
+  }
 
-/**
- * 使用 DeepSeek 生成翻译预处理报告
- */
-async function analyzeWithDeepSeek(text, languageFrom, languageTo, terminologyDatabase) {
+  // 构建术语库字符串
+  const dbTermsList = terminologyDatabase.length > 0
+    ? terminologyDatabase.map(t => `"${t.original}": "${t.translation}"`).join(', ')
+    : '无'
+
+  // 使用更简洁的提示词，要求返回 JSON
+  const prompt = `你是专业翻译预处理专家。分析以下文本，识别需要翻译的专有名词/术语。
+
+【待翻译文本】
+${text}
+
+【翻译方向】${languageFrom} → ${languageTo}
+
+【现有术语库】
+${dbTermsList}
+
+【任务】
+1. 识别文本中的专有名词和技术术语（如：地图质量、定位丢失、重影等完整词汇）
+2. 对于术语库中已有的术语，标记为 existingTerms
+3. 对于新术语，提供建议翻译，标记为 newTerms
+4. 注意：术语应该是完整的词汇单位，不要拆分（如"地图质量确认"是一个术语，不要拆成"地图"、"质量"、"确认"）
+
+【返回格式】严格按以下 JSON 格式返回，不要添加任何其他内容：
+{
+  "documentInfo": {
+    "domain": "文档所属领域",
+    "style": "文档风格",
+    "purpose": "翻译用途"
+  },
+  "existingTerms": [
+    {"original": "中文术语", "translation": "已有翻译"}
+  ],
+  "newTerms": [
+    {"original": "中文术语", "translation": "建议翻译"}
+  ],
+  "translationStrategy": "翻译策略建议"
+}`
+
+  logger.info('📊 DeepSeek 分析中...')
+  
   try {
-    const client = getDeepseekClient()
-    if (!client) {
-      throw new Error('DeepSeek 客户端未初始化')
-    }
-
-    const prompt = buildAnalysisPrompt(text, languageFrom, languageTo, terminologyDatabase)
-    
-    logger.info('📊 DeepSeek 分析中...')
-    
-    // 调用 DeepSeek API（使用超时保护）
     const response = await Promise.race([
       client.chat.completions.create({
         model: 'deepseek-chat',
         messages: [
           {
             role: 'system',
-            content: '你是一个专业的翻译预处理专家，能够生成详细、结构化的翻译分析报告。'
+            content: '你是专业的翻译预处理专家。只返回 JSON 格式的分析结果，不要添加任何解释文字。'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.7,
+        temperature: 0.3,
         max_tokens: 2000
       }),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('DeepSeek API 超时')), 30000)
+        setTimeout(() => reject(new Error('DeepSeek API 超时（150秒）')), 150000)
       )
     ])
 
-    const analysisText = response.choices[0].message.content
-    logger.info('✅ DeepSeek 分析完成')
+    const responseText = response.choices[0].message.content
+    logger.info('✅ DeepSeek 响应完成')
+    logger.info('📝 原始响应: ' + responseText.substring(0, 200) + '...')
     
-    // 解析 DeepSeek 的响应结果
-    const result = parseAnalysisResult(analysisText, terminologyDatabase)
+    // 解析 JSON 响应
+    let result
+    try {
+      // 尝试提取 JSON（处理可能的 markdown 代码块）
+      let jsonStr = responseText
+      const jsonMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/)
+      if (jsonMatch) {
+        jsonStr = jsonMatch[1]
+      }
+      // 清理可能的前后空白和非 JSON 字符
+      jsonStr = jsonStr.trim()
+      if (!jsonStr.startsWith('{')) {
+        const startIndex = jsonStr.indexOf('{')
+        if (startIndex !== -1) {
+          jsonStr = jsonStr.substring(startIndex)
+        }
+      }
+      if (!jsonStr.endsWith('}')) {
+        const endIndex = jsonStr.lastIndexOf('}')
+        if (endIndex !== -1) {
+          jsonStr = jsonStr.substring(0, endIndex + 1)
+        }
+      }
+      
+      result = JSON.parse(jsonStr)
+    } catch (parseError) {
+      logger.error('❌ JSON 解析失败:', parseError.message)
+      logger.error('原始响应:', responseText)
+      throw new Error('DeepSeek 返回格式异常，无法解析')
+    }
     
+    // 标准化返回格式
     return {
-      ...result,
+      documentInfo: result.documentInfo || { domain: '未识别', style: '未识别', purpose: '未识别' },
+      contentStructure: `文档包含约 ${text.length} 个字符`,
+      confirmationText: '请确认以下术语的翻译',
+      translationStrategy: result.translationStrategy || '保持专业、准确的翻译风格',
+      existingTerms: (result.existingTerms || []).map(t => ({
+        original: t.original,
+        translation: t.translation,
+        suggestion: '建议沿用',
+        remark: '数据库中已有翻译',
+        fromDatabase: true,
+        confirmed: false
+      })),
+      newTerms: (result.newTerms || []).map(t => ({
+        original: t.original,
+        translation: t.translation,
+        reason: 'DeepSeek 建议翻译',
+        confirmed: false,
+        fromDatabase: false
+      })),
+      properNouns: [
+        ...(result.existingTerms || []).map(t => ({ ...t, fromDatabase: true })),
+        ...(result.newTerms || []).map(t => ({ ...t, fromDatabase: false }))
+      ],
+      analysisMode: 'deepseek',
       analysisModel: 'deepseek-chat',
       analysisTimestamp: new Date().toISOString()
     }
@@ -89,195 +165,6 @@ async function analyzeWithDeepSeek(text, languageFrom, languageTo, terminologyDa
     logger.error('❌ DeepSeek 分析失败:', error.message)
     throw error
   }
-}
-
-/**
- * 构建分析提示词
- */
-function buildAnalysisPrompt(text, languageFrom, languageTo, terminologyDatabase) {
-  const dbTermsList = terminologyDatabase.length > 0
-    ? terminologyDatabase.map(t => `${t.original} → ${t.translation}`).join('\n')
-    : '（术语库为空）'
-
-  return `你是一个专业的翻译预处理专家。请分析以下待翻译文本，并生成详细的分析报告。
-
-**待翻译文本：**
-${text}
-
-**翻译方向：**
-源语言：${languageFrom}
-目标语言：${languageTo}
-
-**现有术语库：**
-${dbTermsList}
-
-**任务要求：**
-请按以下格式生成分析报告：
-
-## 第一部分：文档分析与翻译建议
-
-### 📋 文档基本信息
-- 所属领域：[识别文档所属的专业领域]
-- 文体风格：[技术文档/营销文案/法律文件等]
-- 翻译用途：[识别翻译的目的和用途]
-
-### 🏗️ 内容结构概览
-[简要描述文档的结构和主要内容]
-
-## 第二部分：术语分类整理
-
-### 1. 数据库中已有翻译（待确认）
-| 中文术语 | 当前翻译 | 是否建议沿用 | 备注 |
-|---------|---------|-------------|------|
-
-### 2. 新术语（建议翻译，待确认）
-| 中文术语 | 建议翻译 | 是否需要确认 | 备注 |
-|---------|---------|-------------|------|
-
-## 第三部分：确认文案
-[生成一段专业、友好的确认文案]
-
-## 第四部分：补充信息
-
-### 🎯 翻译策略建议
-- 翻译风格：[建议]
-- 句式处理：[建议]
-- 技术准确性：[建议]`
-}
-
-/**
- * 解析分析结果
- */
-function parseAnalysisResult(analysisText, terminologyDatabase) {
-  const documentInfo = {
-    domain: extractField(analysisText, '所属领域') || '未识别',
-    style: extractField(analysisText, '文体风格') || '未识别',
-    purpose: extractField(analysisText, '翻译用途') || '未识别'
-  }
-
-  const contentStructure = extractSection(analysisText, '内容结构概览') || '未提供'
-  const confirmationText = extractSection(analysisText, '第三部分') || '请确认以上术语翻译'
-  const translationStrategy = extractSection(analysisText, '翻译策略建议') || '请保持专业准确的翻译风格'
-
-  const existingTerms = extractTermsFromTable(analysisText, '数据库中已有翻译')
-  const newTerms = extractTermsFromTable(analysisText, '新术语')
-
-  return {
-    documentInfo,
-    contentStructure,
-    confirmationText,
-    translationStrategy,
-    existingTerms: existingTerms.map(t => ({
-      original: t.original,
-      translation: t.translation,
-      suggestion: '建议沿用',
-      remark: '数据库中已有翻译',
-      fromDatabase: true,
-      confirmed: false
-    })),
-    newTerms: newTerms.map(t => ({
-      original: t.original,
-      translation: t.translation,
-      reason: '新术语建议翻译',
-      confirmed: false,
-      fromDatabase: false
-    })),
-    properNouns: [...existingTerms.map(t => ({ ...t, fromDatabase: true })), 
-                  ...newTerms.map(t => ({ ...t, fromDatabase: false }))],
-    rawAnalysis: analysisText
-  }
-}
-
-function extractField(text, fieldName) {
-  const pattern = new RegExp(`${fieldName}[：:：]\\s*([^\\n]+)`, 'i')
-  const match = text.match(pattern)
-  return match ? match[1].trim() : ''
-}
-
-function extractSection(text, sectionName) {
-  const pattern = new RegExp(`${sectionName}[^\\n]*\\n([\\s\\S]*?)(?=\\n##|\\n###|$)`, 'i')
-  const match = text.match(pattern)
-  return match ? match[1].trim() : ''
-}
-
-function extractTermsFromTable(text, tableName) {
-  const terms = []
-  const sectionPattern = new RegExp(`${tableName}[\\s\\S]*?(?=\\n##|\\n###|$)`, 'i')
-  const sectionMatch = text.match(sectionPattern)
-  
-  if (!sectionMatch) return terms
-  
-  const section = sectionMatch[0]
-  const lines = section.split('\n')
-  
-  for (const line of lines) {
-    // 支持英文和日文翻译
-    // 日文字符：平假名 \u3040-\u309F, 片假名 \u30A0-\u30FF, 日文标点 ・ー
-    const match = line.match(/\|\s*([\u4e00-\u9fa5]{1,20})\s*\|\s*([A-Za-z\u3040-\u309F\u30A0-\u30FF][A-Za-z\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s・ー\-]*)\s*\|/)
-    if (match) {
-      terms.push({
-        original: match[1].trim(),
-        translation: match[2].trim()
-      })
-    }
-  }
-  
-  return terms
-}
-
-/**
- * 生成简化的分析结果
- */
-function generateSimpleAnalysis(text, terminologyDatabase, languageFrom, languageTo) {
-  logger.info('使用简化分析模式')
-  
-  const chineseTerms = extractChineseTerms(text)
-  const existingTerms = []
-  const newTerms = []
-  
-  chineseTerms.forEach(term => {
-    const existing = terminologyDatabase.find(t => t.original === term)
-    if (existing) {
-      existingTerms.push({
-        original: term,
-        translation: existing.translation,
-        suggestion: '建议沿用',
-        remark: '数据库中已有翻译',
-        fromDatabase: true,
-        confirmed: false
-      })
-    } else {
-      newTerms.push({
-        original: term,
-        translation: `[待翻译]`,
-        reason: '新术语需要确认',
-        confirmed: false,
-        fromDatabase: false
-      })
-    }
-  })
-
-  return {
-    documentInfo: {
-      domain: '技术文档',
-      style: '技术说明',
-      purpose: '专业翻译'
-    },
-    contentStructure: `文档包含约 ${text.length} 个字符，识别到 ${chineseTerms.length} 个潜在术语`,
-    confirmationText: `系统识别到 ${existingTerms.length} 个已有术语和 ${newTerms.length} 个新术语，请确认这些术语的翻译。`,
-    translationStrategy: `翻译方向：${languageFrom} → ${languageTo}\n保持专业、准确、流畅的翻译风格，确保术语一致性。`,
-    existingTerms,
-    newTerms,
-    properNouns: [...existingTerms, ...newTerms]
-  }
-}
-
-function extractChineseTerms(text) {
-  const pattern = /[\u4e00-\u9fa5]{2,8}/g
-  const matches = text.match(pattern) || []
-  const commonWords = new Set(['这个', '那个', '可以', '需要', '如果', '因为', '所以', '但是', '而且', '或者', '进行', '使用', '操作', '功能'])
-  const uniqueTerms = [...new Set(matches)].filter(term => !commonWords.has(term))
-  return uniqueTerms.slice(0, 15)
 }
 
 export default {

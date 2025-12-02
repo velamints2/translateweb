@@ -36,11 +36,6 @@
             <el-option label="越南语" value="VI"></el-option>
           </el-select>
         </div>
-        <div class="simulation-option">
-          <el-checkbox v-model="useSimulation" size="large">
-            使用模拟数据（不调用真实API）
-          </el-checkbox>
-        </div>
       </el-card>
     </div>
 
@@ -56,8 +51,6 @@
         <div class="upload-container">
           <el-upload
             :before-upload="beforeFileUpload"
-            :on-success="handleFileUploadSuccess"
-            :on-error="handleFileUploadError"
             :file-list="fileList"
             :auto-upload="true"
             :show-file-list="false"
@@ -134,9 +127,21 @@
           <div class="card-header">
             <el-icon><ChatDotRound /></el-icon>
             <span>文档分析结果</span>
+            <el-tag v-if="analysisResult.analysisMode === 'local'" type="info" size="small" style="margin-left: 10px;">本地分析</el-tag>
+            <el-tag v-else-if="analysisResult.analysisMode === 'deepseek'" type="success" size="small" style="margin-left: 10px;">DeepSeek</el-tag>
           </div>
         </template>
         <div class="analysis-content">
+          <!-- 分析模式提示 -->
+          <el-alert
+            v-if="analysisResult.notice"
+            :title="analysisResult.notice"
+            type="info"
+            :closable="true"
+            show-icon
+            style="margin-bottom: 15px;"
+          />
+          
           <!-- 文档信息 -->
           <div class="document-info">
             <h4>文档基本信息</h4>
@@ -265,29 +270,30 @@
         <template #header>
           <div class="card-header">
             <el-icon><ChatDotRound /></el-icon>
-            <span>术语确认结果</span>
+            <span>术语确认完成</span>
           </div>
         </template>
         <div class="confirmation-result">
           <div class="success-message">
-            ✅ {{ confirmationResult.message }}
+            ✅ {{ confirmationResult.message || '术语已确认，可以开始翻译' }}
           </div>
-          <div class="prompt-message">
-            {{ confirmationResult.prompt }}
-          </div>
-          <div class="translation-input">
-            <el-input
-              v-model="translationCommand"
-              placeholder="请输入'开始翻译'以开始翻译流程"
-              class="command-input"
-            ></el-input>
+          <div class="translation-actions" style="margin-top: 20px; display: flex; gap: 15px;">
             <el-button
               type="primary"
+              size="large"
               :loading="loading.translate"
               @click="startTranslation"
-              :disabled="translationCommand.trim() !== '开始翻译'"
+              icon="Right"
             >
-              执行翻译
+              开始翻译
+            </el-button>
+            <el-button
+              type="default"
+              size="large"
+              @click="goBackToAnalysis"
+              icon="Back"
+            >
+              返回修改术语
             </el-button>
           </div>
         </div>
@@ -346,7 +352,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Refresh, UploadFilled, Document, ChatDotRound, Switch, Download, DocumentCopy } from '@element-plus/icons-vue'
+import { Refresh, UploadFilled, Document, ChatDotRound, Switch, Download, DocumentCopy, Back, Right } from '@element-plus/icons-vue'
 import { 
   submitTextAPI, 
   confirmNounsAPI, 
@@ -365,8 +371,6 @@ const errorMessage = ref('')
 const translationCommand = ref('')
 const uploadedFile = ref(null)
 const fileList = ref([])
-// 模拟数据选项
-const useSimulation = ref(false)
 // 可编辑的术语列表
 const editableExistingTerms = ref([])
 const editableNewTerms = ref([])
@@ -418,73 +422,20 @@ const submitText = async () => {
   errorMessage.value = ''
   
   try {
-    if (useSimulation.value) {
-      // 使用模拟数据，不调用真实API
-      console.log('📤 使用模拟数据进行文档分析')
-      // 生成模拟分析结果
-      const simulationData = {
-        sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        documentInfo: {
-          domain: '机器人导航与地图构建技术',
-          style: '技术说明文档',
-          purpose: '国际技术文档发布'
-        },
-        contentStructure: inputText.value.includes('地图质量确认') ? 
-          '地图质量确认文档：包含地图重影、虚影和玻璃场景的处理说明' : 
-          '技术文档：包含多个技术问题的描述和解决方案',
-        properNouns: [
-          { original: '重影', translation: 'Ghosting', fromDatabase: false, confirmed: false },
-          { original: '虚影', translation: 'Phantom', fromDatabase: false, confirmed: false },
-          { original: '定位得分', translation: 'Localization Score', fromDatabase: false, confirmed: false },
-          { original: '扩建功能', translation: 'Expansion Function', fromDatabase: false, confirmed: false },
-          { original: '点云数据', translation: 'Point Cloud Data', fromDatabase: false, confirmed: false },
-          { original: '定位丢失', translation: 'Localization Loss', fromDatabase: false, confirmed: false },
-          { original: '运行停止', translation: 'Operation Halt', fromDatabase: false, confirmed: false },
-          { original: '乱走', translation: 'Erratic Movement', fromDatabase: false, confirmed: false },
-          { original: '禁区', translation: 'Forbidden Zone', fromDatabase: false, confirmed: false }
-        ].filter(noun => inputText.value.includes(noun.original)),
-        confirmationText: '请确认以下术语的译法',
-        translationStrategy: '保持技术文档的专业性和准确性，使用简洁明了的表达方式',
-        existingTerms: [],
-        newTerms: [
-          { original: '重影', translation: 'Ghosting', reason: '新术语建议翻译', confirmed: false },
-          { original: '虚影', translation: 'Phantom', reason: '新术语建议翻译', confirmed: false },
-          { original: '定位得分', translation: 'Localization Score', reason: '新术语建议翻译', confirmed: false },
-          { original: '扩建功能', translation: 'Expansion Function', reason: '新术语建议翻译', confirmed: false },
-          { original: '点云数据', translation: 'Point Cloud Data', reason: '新术语建议翻译', confirmed: false },
-          { original: '定位丢失', translation: 'Localization Loss', reason: '新术语建议翻译', confirmed: false },
-          { original: '运行停止', translation: 'Operation Halt', reason: '新术语建议翻译', confirmed: false },
-          { original: '乱走', translation: 'Erratic Movement', reason: '新术语建议翻译', confirmed: false },
-          { original: '禁区', translation: 'Forbidden Zone', reason: '新术语建议翻译', confirmed: false }
-        ].filter(noun => inputText.value.includes(noun.original))
+    // 调用 DeepSeek API 进行文本分析
+    const data = await submitTextAPI(inputText.value.trim(), null, languageFrom.value, languageTo.value)
+    analysisResult.value = data
+    initializeEditableTerms() // 初始化可编辑术语
+    ElMessage.success('文档分析完成！')
+    
+    // 小语种直接跳过术语确认
+    if (isMinorLanguage.value) {
+      confirmationResult.value = {
+        sessionId: data.sessionId,
+        confirmedNouns: [],
       }
-      analysisResult.value = simulationData
-      initializeEditableTerms() // 初始化可编辑术语
-      ElMessage.success('文档分析完成！（使用模拟数据）')
-      // 小语种直接跳过术语确认
-      if (isMinorLanguage.value) {
-        confirmationResult.value = {
-          sessionId: simulationData.sessionId,
-          confirmedNouns: [],
-        }
-        await startTranslation()
-        return
-      }
-    } else {
-      // 调用真实API
-      const data = await submitTextAPI(inputText.value.trim(), null, languageFrom.value, languageTo.value)
-      analysisResult.value = data
-      initializeEditableTerms() // 初始化可编辑术语
-      ElMessage.success('文档分析完成！')
-      // 小语种直接跳过术语确认
-      if (isMinorLanguage.value) {
-        confirmationResult.value = {
-          sessionId: data.sessionId,
-          confirmedNouns: [],
-        }
-        await startTranslation()
-        return
-      }
+      await startTranslation()
+      return
     }
   } catch (error) {
     errorMessage.value = error.message
@@ -569,6 +520,13 @@ const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleString('zh-CN')
 }
 
+// 返回上一步（修改术语）
+const goBackToAnalysis = () => {
+  confirmationResult.value = null
+  translationResult.value = null
+  ElMessage.info('已返回术语确认步骤，您可以重新修改术语')
+}
+
 // 重置功能
 const resetAll = () => {
   // 重置所有数据
@@ -625,18 +583,27 @@ const beforeFileUpload = (file) => {
   return true
 }
 
-const handleFileUploadSuccess = async (response, file) => {
-  console.log('📥 收到文件上传响应:', response)
-  loading.upload = false
-  
+// 自定义文件上传函数
+const customUpload = async (options) => {
+  loading.upload = true
   try {
-    // 检查response是否存在
-    if (!response) {
-      ElMessage.error('文件上传失败: 服务器返回空响应')
+    console.log('📤 开始上传文件:', options.file.name)
+    const response = await uploadFileAPI(options.file)
+    console.log('📥 上传响应:', response)
+    
+    // 检查响应是否有效
+    if (!response || typeof response !== 'object') {
+      console.warn('服务器返回无效响应')
       return
     }
     
-    // 检查response格式
+    // 检查是否有错误
+    if (response.error) {
+      console.warn('文件处理失败:', response.error)
+      return
+    }
+    
+    // 检查成功标志
     if (response.success) {
       const extractedText = response.originalText || response.extractedText || ''
       
@@ -646,9 +613,9 @@ const handleFileUploadSuccess = async (response, file) => {
                            extractedText.trim().length === 0
       
       uploadedFile.value = {
-        name: response.fileName || file.name,
-        size: file.size,
-        type: file.type,
+        name: response.fileName || options.file.name,
+        size: options.file.size,
+        type: options.file.type,
         extractedText: extractedText
       }
       
@@ -661,33 +628,11 @@ const handleFileUploadSuccess = async (response, file) => {
         ElMessage.success('文件上传成功! 文本内容已自动提取')
       }
     } else {
-      ElMessage.error('文件处理失败: ' + (response.error || response.message || '未知错误'))
+      // success 不为 true 时
+      console.warn('文件处理失败:', response.message || '未知错误')
     }
   } catch (error) {
-    console.error('❌ 处理文件上传响应时出错:', error)
-    ElMessage.error('文件上传失败: ' + (error.message || '处理响应时出错'))
-  }
-}
-
-const handleFileUploadError = (error) => {
-  loading.upload = false
-  ElMessage.error(`文件上传失败: ${error.message}`)
-}
-
-// 自定义文件上传函数
-const customUpload = async (options) => {
-  loading.upload = true
-  try {
-    console.log('📤 开始上传文件:', options.file.name)
-    const response = await uploadFileAPI(options.file)
-    console.log('📥 上传成功，响应:', response)
-    options.onSuccess(response, options.file)
-  } catch (error) {
     console.error('❌ 上传失败:', error)
-    // 确保onError接收一个包含message属性的对象
-    options.onError({
-      message: error.message || '文件上传失败'
-    })
   } finally {
     loading.upload = false
   }

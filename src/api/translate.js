@@ -30,12 +30,8 @@ api.interceptors.response.use(
   (response) => {
     console.log('✅ 收到响应:', response.status)
     
-    // 验证响应格式
-    if (!response.data) {
-      throw new Error('服务器返回空响应')
-    }
-    
-    return response.data
+    // 返回响应数据（允许空对象，但不允许 undefined/null）
+    return response.data !== undefined && response.data !== null ? response.data : {}
   },
   (error) => {
     console.error('❌ 请求错误:', error.response?.status || error.code)

@@ -19,11 +19,12 @@ class TranslationAgent {
 
   /**
    * 加载飞书知识库
+   * @param {string} targetLanguage - 目标语言代码
    */
-  async loadKnowledgeBase() {
-    logger.info('📚 加载飞书知识库...')
+  async loadKnowledgeBase(targetLanguage = 'EN-US') {
+    logger.info(`📚 加载飞书知识库 (目标语言: ${targetLanguage})...`)
     try {
-      const result = await this.tools.feishu.load()
+      const result = await this.tools.feishu.load(targetLanguage)
       logger.info(`✅ 成功加载 ${result.length} 个术语`)
       return result
     } catch (error) {
@@ -34,10 +35,12 @@ class TranslationAgent {
 
   /**
    * 查询术语
+   * @param {string} term - 术语
+   * @param {string} targetLanguage - 目标语言代码
    */
-  async queryTerm(term) {
+  async queryTerm(term, targetLanguage = 'EN-US') {
     try {
-      return await this.tools.feishu.query(term)
+      return await this.tools.feishu.query(term, targetLanguage)
     } catch (error) {
       logger.error(`❌ 查询术语失败:`, error)
       return null
@@ -65,8 +68,8 @@ class TranslationAgent {
   async preprocessText(text, languageFrom, languageTo) {
     logger.info('📋 预处理文本...')
     try {
-      // 先加载术语库
-      const terminologyDatabase = await this.loadKnowledgeBase()
+      // 根据目标语言加载对应的术语库
+      const terminologyDatabase = await this.loadKnowledgeBase(languageTo)
       
       // 执行预处理
       const result = await this.tools.preprocess.analyze(
