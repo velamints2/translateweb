@@ -289,8 +289,30 @@
         </template>
         <div class="confirmation-result">
           <div class="success-message">
-            ✅ {{ confirmationResult.message || '术语已确认，可以开始翻译' }}
+            ✅ 术语确认成功，已保存以下术语：
           </div>
+          
+          <el-table 
+            v-if="confirmationResult.confirmedNouns && confirmationResult.confirmedNouns.length > 0"
+            :data="confirmationResult.confirmedNouns" 
+            border 
+            style="width: 100%; margin: 20px 0;"
+            max-height="400"
+          >
+            <el-table-column prop="original" label="中文术语" width="180"></el-table-column>
+            <el-table-column prop="translation" label="确认翻译"></el-table-column>
+            <el-table-column label="来源" width="120">
+              <template #default="scope">
+                <el-tag v-if="scope.row.fromDatabase" type="info">已有库</el-tag>
+                <el-tag v-else type="success">新添加</el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
+          
+          <div v-else class="no-terms-message" style="margin: 20px 0; color: #909399;">
+            本次没有确认任何特定术语
+          </div>
+
           <div class="translation-actions" style="margin-top: 20px; display: flex; gap: 15px;">
             <el-button
               type="primary"

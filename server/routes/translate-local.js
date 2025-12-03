@@ -201,7 +201,8 @@ router.post('/confirm-nouns', async (req, res) => {
     
     const confirmationResponse = {
       message: `好的,已经帮您把这些词存进去了:${termsList},`,
-      prompt: '如果需要直接开始翻译,请回复:开始翻译'
+      prompt: '如果需要直接开始翻译,请回复:开始翻译',
+      confirmedNouns: confirmedTerms
     }
     
     logger.info(`✅ 术语确认成功，共${confirmedTerms.length}个术语`)
