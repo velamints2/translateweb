@@ -19,12 +19,13 @@ strLocalProxyPort = "7890"   ' 本地VPN/代理端口 (Clash默认7890, v2ray默
 Set WshShell = CreateObject("WScript.Shell")
 
 ' 构建 SSH 命令
-' -R 7890:127.0.0.1:7890  => 将服务器的 7890 端口转发到本地的 7890 端口
-' 这样服务器访问 localhost:7890 就等于访问你电脑的代理
-strCommand = "ssh -R " & strLocalProxyPort & ":127.0.0.1:" & strLocalProxyPort & " " & strUser & "@" & strHost
+' -R 7890:127.0.0.1:7890  => 将服务器的 7890 端口转发到本地的 7890 端口 (让服务器能上网)
+' -L 3431:127.0.0.1:3431  => 将服务器的 3431 端口转发到本地的 3431 端口 (让你能访问网页)
+strCommand = "ssh -R " & strLocalProxyPort & ":127.0.0.1:" & strLocalProxyPort & " -L 3431:127.0.0.1:3431 " & strUser & "@" & strHost
 
-MsgBox "即将连接服务器并共享本地VPN (端口 " & strLocalProxyPort & ")..." & vbCrLf & _
-       "请确保你的电脑上已经开启了 VPN/Clash 且允许局域网连接(可选)", vbInformation, "连接助手"
+MsgBox "即将连接服务器..." & vbCrLf & _
+       "1. [VPN共享] 已启用 (端口 " & strLocalProxyPort & ")" & vbCrLf & _
+       "2. [网页访问] 已启用 (请访问 http://localhost:3431)", vbInformation, "连接助手"
 
 ' 打开 CMD 并运行
 WshShell.Run "cmd /k " & strCommand
