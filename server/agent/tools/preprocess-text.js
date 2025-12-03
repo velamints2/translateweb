@@ -35,9 +35,19 @@ async function analyze(text, languageFrom, languageTo, terminologyDatabase = [])
     throw new Error('DeepSeek 客户端初始化失败')
   }
 
-  // 构建术语库字符串
-  const dbTermsList = terminologyDatabase.length > 0
-    ? terminologyDatabase.map(t => `"${t.original}": "${t.translation}"`).join(', ')
+  // 预先筛选文档中出现的术语，避免将整个数据库传给 LLM
+  // 这样可以解决两个问题：
+  // 1. 避免 Prompt 过长超过 Token 限制
+  // 2. 确保数据库中存在的术语一定会被识别（解决 LLM 注意力丢失导致漏检的问题）
+  const relevantTerms = terminologyDatabase.filter(term => 
+    term.original && text.includes(term.original)
+  );
+  
+  logger.info(`🔍 预筛选发现 ${relevantTerms.length} 个已知术语 (总库大小: ${terminologyDatabase.length})`)
+
+  // 构建术语库字符串 (只包含相关的)
+  const dbTermsList = relevantTerms.length > 0
+    ? relevantTerms.map(t => `"${t.original}": "${t.translation}"`).join(', ')
     : '无'
 
   // 使用更简洁的提示词，要求返回 JSON
@@ -147,29 +157,37 @@ ${dbTermsList}
     }
     
     // 标准化返回格式
+    // 强制合并本地匹配的术语，确保不漏掉数据库中已有的词
+    const finalExistingTerms = relevantTerms.map(t => ({
+      original: t.original,
+      translation: t.translation,
+      suggestion: '建议沿用',
+      remark: '数据库中已有翻译',
+      fromDatabase: true,
+      confirmed: false
+    }));
+
+    // 过滤 LLM 返回的新术语，避免重复
+    const finalNewTerms = (result.newTerms || []).filter(nt => 
+      !relevantTerms.some(rt => rt.original === nt.original)
+    ).map(t => ({
+      original: t.original,
+      translation: t.translation,
+      reason: 'DeepSeek 建议翻译',
+      confirmed: false,
+      fromDatabase: false
+    }));
+
     return {
       documentInfo: result.documentInfo || { domain: '未识别', style: '未识别', purpose: '未识别' },
       contentStructure: `文档包含约 ${text.length} 个字符`,
       confirmationText: '请确认以下术语的翻译',
       translationStrategy: result.translationStrategy || '保持专业、准确的翻译风格',
-      existingTerms: (result.existingTerms || []).map(t => ({
-        original: t.original,
-        translation: t.translation,
-        suggestion: '建议沿用',
-        remark: '数据库中已有翻译',
-        fromDatabase: true,
-        confirmed: false
-      })),
-      newTerms: (result.newTerms || []).map(t => ({
-        original: t.original,
-        translation: t.translation,
-        reason: 'DeepSeek 建议翻译',
-        confirmed: false,
-        fromDatabase: false
-      })),
+      existingTerms: finalExistingTerms,
+      newTerms: finalNewTerms,
       properNouns: [
-        ...(result.existingTerms || []).map(t => ({ ...t, fromDatabase: true })),
-        ...(result.newTerms || []).map(t => ({ ...t, fromDatabase: false }))
+        ...finalExistingTerms,
+        ...finalNewTerms
       ],
       analysisMode: 'deepseek',
       analysisModel: 'deepseek-chat',
